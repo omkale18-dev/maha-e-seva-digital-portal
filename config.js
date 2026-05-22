@@ -3,6 +3,9 @@
 // Since the site is protected by client-side authentication, these are safe to bundle.
 
 window.CONFIG = {
+  // 0. Google Analytics 4 Measurement ID (e.g. "G-XXXXXXXXXX")
+  GOOGLE_ANALYTICS_ID: "G-V4NQSTFL8K",
+
   // 1. Google Apps Script Webhook URL
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec",
 
@@ -19,10 +22,6 @@ window.CONFIG = {
   // 3b. Customer Support Contact Numbers
   WHATSAPP_NUMBER: "919096768351", // Your WhatsApp Business number (with country code, e.g., 919096768351)
   CONTACT_PHONE: "+919096768351",   // Your public phone call number (e.g., +919096768351)
-
-  // 4. Admin Write Token for Google Apps Script authorization
-  ADMIN_TOKEN: "mseva_Q7xL92pA4vN8kR3sT6yB1cD5eF0hWz",
-
   // 5. Supabase Admin Authentication Configuration
   SUPABASE_URL: "https://xszkwltrgfhtpifnhohg.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzemt3bHRyZ2ZodHBpZm5ob2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQxMDMsImV4cCI6MjA5NDk1MDEwM30.9bgZrj8os4cxWM-pVBlTBABEye7EEm6gAEx7p1tbvz8",

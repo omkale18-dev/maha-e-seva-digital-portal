@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="config.js"></script>
+    <script src="admin_config.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Aaple Sarkar Maha e-Seva</title>
     
@@ -742,9 +743,11 @@
         }
 
         function getAdminToken() {
-            const token = (window.CONFIG && window.CONFIG.ADMIN_TOKEN) ? window.CONFIG.ADMIN_TOKEN : localStorage.getItem('kendra_admin_token');
+            const token = (window.ADMIN_CONFIG && window.ADMIN_CONFIG.ADMIN_TOKEN) || 
+                          (window.CONFIG && window.CONFIG.ADMIN_TOKEN) || 
+                          localStorage.getItem('kendra_admin_token');
             if (!token) {
-                throw new Error("Missing admin write token. Please configure ADMIN_TOKEN in config.js.");
+                throw new Error("Missing admin write token. Please configure ADMIN_TOKEN in admin_config.js.");
             }
             return token;
         }
@@ -1293,6 +1296,27 @@
         const editModalContent = document.getElementById('edit-modal-content');
 
         function openEditModal(appId, name, phone, service, status, paidAmount, remainingAmount) {
+            // Pre-populate service dropdown options
+            populateServiceSelectOptions();
+
+            // Handle inactive or custom services dynamically
+            const selectEl = document.getElementById('edit-cust-service');
+            if (selectEl) {
+                let found = false;
+                for (let i = 0; i < selectEl.options.length; i++) {
+                    if (selectEl.options[i].value === service) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found && service) {
+                    const tempOpt = document.createElement('option');
+                    tempOpt.value = service;
+                    tempOpt.textContent = `${service} (Inactive / Custom)`;
+                    selectEl.appendChild(tempOpt);
+                }
+            }
+
             document.getElementById('edit-app-id').value = appId;
             document.getElementById('edit-cust-name').value = name;
             document.getElementById('edit-cust-phone').value = phone;

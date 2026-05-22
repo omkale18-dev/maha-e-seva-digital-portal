@@ -3,6 +3,24 @@
 <head>
     <meta charset="utf-8"/>
     <script src="config.js"></script>
+    <script>
+        // Dynamically load Google Analytics 4 (GA4) if configured
+        if (window.CONFIG && window.CONFIG.GOOGLE_ANALYTICS_ID) {
+            const gaId = window.CONFIG.GOOGLE_ANALYTICS_ID.trim();
+            if (gaId) {
+                const gaScript = document.createElement('script');
+                gaScript.async = true;
+                gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+                document.head.appendChild(gaScript);
+
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){window.dataLayer.push(arguments);}
+                window.gtag = gtag;
+                gtag('js', new Date());
+                gtag('config', gaId);
+            }
+        }
+    </script>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Maha e-Seva Kendra | Your Digital Gateway to Government Services</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -421,9 +439,9 @@
         <div class="reveal-section">
             <div class="relative">
                 <div class="absolute -top-4 -left-4 w-32 h-32 border-4 border-rich-gold/20 -z-10 rounded-xl"></div>
-                <img alt="Operator Portrait" class="rounded-2xl shadow-xl w-full h-[500px] object-cover border-4 border-white" src="https://lh3.googleusercontent.com/d/1U5yILT98wVzZ7VKQMDlxL0u6Alfii7kh"/>
+                <img alt="Operator Portrait" class="rounded-2xl shadow-xl w-full aspect-[4/5] object-cover border-4 border-white" src="https://lh3.googleusercontent.com/d/1aptlDsxks-81ScTsmj_qV9OxbmamXps-"/>
                 <div class="absolute bottom-6 left-6 bg-white p-4 rounded-xl shadow-lg border-l-4 border-rich-gold">
-                    <p class="text-primary font-bold">Authorized ID</p>
+                    <p class="text-primary font-bold ">Urmila Kale</p>
                     <p class="text-secondary font-code-id text-lg">1763XXXXXX10</p>
                 </div>
             </div>
@@ -901,7 +919,8 @@
         if (!serviceGrid) return;
 
         const normalizedServices = normalizeServiceList(Array.isArray(services) && services.length ? services : defaultServiceCatalog);
-        serviceGrid.innerHTML = normalizedServices.map((service, index) => buildServiceCard(service, index)).join('');
+        const activeServices = normalizedServices.filter(s => s.status !== 'Inactive');
+        serviceGrid.innerHTML = activeServices.map((service, index) => buildServiceCard(service, index)).join('');
         activateServiceCardsIfVisible();
     }
 
