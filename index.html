@@ -2,6 +2,7 @@
 <html class="scroll-smooth" lang="en">
 <head>
     <meta charset="utf-8"/>
+    <script src="config.js"></script>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Maha e-Seva Kendra | Your Digital Gateway to Government Services</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -857,7 +858,7 @@
 
      // --- DYNAMIC DATA SYNCING LOGIC ---
     
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
+    const SCRIPT_URL = (window.CONFIG && window.CONFIG.APPS_SCRIPT_URL) ? window.CONFIG.APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
 
     // Default Data
     const defaultGallery = [

@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="config.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Aaple Sarkar Maha e-Seva</title>
     
@@ -482,42 +483,56 @@
                             <label class="block text-xs font-bold text-primary/70 mb-2">CSC ID / Registration No.</label>
                             <input type="text" id="setting-csc-id" value="MH-ESC-452901" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50">
                         </div>
+                        
+                        <div class="md:col-span-2 flex justify-end pt-4">
+                            <button onclick="saveSettings()" class="bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-primary-light transition-all">Save Profile Settings</button>
+                        </div>
+                        
                         <div class="md:col-span-2 border-t border-gray-100 pt-6">
-                            <h3 class="text-sm font-bold text-primary mb-1">WhatsApp Cloud API (Free Two-Way Chatbot)</h3>
-                            <p class="text-xs text-primary/60 mb-4">Connect Meta Developer Account directly with Google Apps Script Webhook.</p>
+                            <h3 class="text-sm font-bold text-primary mb-1">System Integrations & Credentials</h3>
+                            <p class="text-xs text-primary/60 mb-4">Credentials and keys are permanently configured and securely loaded from <span class="font-mono bg-gray-100 px-1 py-0.5 rounded text-secondary font-bold">config.js</span>.</p>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-primary/70 mb-2">WhatsApp Permanent Access Token <span class="text-[10px] text-gray-400 font-normal ml-2">(from Meta Business Suite)</span></label>
-                            <input type="password" id="setting-whatsapp-token" placeholder="EAAb..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50 font-mono text-gray-600">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-primary/70 mb-2">Webhook Callback URL <span class="text-[10px] text-gray-400 font-normal ml-2">(Paste in Meta Dashboard)</span></label>
-                            <input type="text" id="setting-webhook-url" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none font-mono text-gray-500 cursor-not-allowed">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-primary/70 mb-2">Webhook Verify Token <span class="text-[10px] text-gray-400 font-normal ml-2">(Use in Meta Dashboard)</span></label>
-                            <input type="text" id="setting-webhook-verify" value="mseva_chatbot_secure_token" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none font-mono text-gray-500 cursor-not-allowed">
-                        </div>
-                        <div class="md:col-span-2 border-t border-gray-100 pt-6">
-                            <h3 class="text-sm font-bold text-primary mb-1">Google Maps & Review Settings</h3>
-                            <p class="text-xs text-primary/60 mb-4">Configure review sync using Google Places API key.</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-primary/70 mb-2">Google Maps Place ID <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for Review Sync)</span></label>
-                            <input type="text" id="setting-place-id" placeholder="e.g. ChIJJYGYXNi1wzsRvm4uXm4aYZQ" value="ChIJJYGYXNi1wzsRvm4uXm4aYZQ" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4285F4] font-mono text-gray-600 mb-2">
-                            
-                            <label class="block text-xs font-bold text-primary/70 mb-2 mt-4">Google Maps API Key <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for Review Sync)</span></label>
-                            <div class="flex gap-2">
-                                <input type="password" id="setting-api-key" placeholder="AIzaSy..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4285F4] font-mono text-gray-600">
-                                <button onclick="saveSettings()" class="bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-primary-light transition-colors whitespace-nowrap">Save Settings</button>
+
+                        <!-- Read-only Credentials Display Card -->
+                        <div class="md:col-span-2 p-6 rounded-2xl bg-slate-50/50 border border-slate-100 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Webhook Callback URL</p>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-xs font-mono text-gray-600 truncate" id="info-webhook-url">Loading...</p>
+                                        <button onclick="navigator.clipboard.writeText(window.CONFIG?.APPS_SCRIPT_URL || '').then(() => alert('Webhook URL copied!'))" class="text-xs text-secondary hover:text-primary font-bold flex items-center gap-1 transition-all">
+                                            <span class="material-symbols-outlined text-sm">content_copy</span> Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Webhook Verify Token</p>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <p class="text-xs font-mono text-gray-600 truncate" id="info-webhook-verify">Loading...</p>
+                                        <button onclick="navigator.clipboard.writeText(window.CONFIG?.WEBHOOK_VERIFY_TOKEN || 'mseva_chatbot_secure_token').then(() => alert('Verify Token copied!'))" class="text-xs text-secondary hover:text-primary font-bold flex items-center gap-1 transition-all">
+                                            <span class="material-symbols-outlined text-sm">content_copy</span> Copy
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Google Maps API Key</p>
+                                    <p class="text-xs font-mono text-gray-600 truncate" id="info-maps-key">Loaded securely</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Google Place ID</p>
+                                    <p class="text-xs font-mono text-gray-600 truncate" id="info-place-id">Loading...</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Admin API Token</p>
+                                    <p class="text-xs font-mono text-gray-600 truncate" id="info-admin-token">Configured & Secure</p>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white border border-gray-100">
+                                    <p class="text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Supabase Authentication</p>
+                                    <p class="text-xs text-green-600 font-bold flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">check_circle</span> Active & Authorized
+                                    </p>
+                                </div>
                             </div>
-                            <label class="block text-xs font-bold text-primary/70 mb-2 mt-4">Admin Write Token <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for protected add/edit requests)</span></label>
-                            <input type="password" id="setting-admin-token" placeholder="Paste your Apps Script admin token" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50 font-mono text-gray-600">
-                            <div class="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
-                                <p class="text-xs font-bold text-amber-800">Supabase Auth Configuration</p>
-                                <p class="text-[11px] text-amber-700 mt-1">Configured directly in code. Edit <span class="font-mono">SUPABASE_URL</span>, <span class="font-mono">SUPABASE_ANON_KEY</span>, and <span class="font-mono">ALLOWED_ADMIN_EMAILS</span> in <span class="font-mono">admin.html</span>.</p>
-                            </div>
-                            <p class="text-[10px] text-gray-500 mt-2">Find your Place ID using the Google Maps Platform Place ID Finder and generate an API key in Google Cloud Console.</p>
                         </div>
                     </div>
                 </div>
@@ -712,11 +727,11 @@
     </div>
     
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
+        const SCRIPT_URL = (window.CONFIG && window.CONFIG.APPS_SCRIPT_URL) ? window.CONFIG.APPS_SCRIPT_URL : "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
 
-        const SUPABASE_URL = 'https://xszkwltrgfhtpifnhohg.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzemt3bHRyZ2ZodHBpZm5ob2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQxMDMsImV4cCI6MjA5NDk1MDEwM30.9bgZrj8os4cxWM-pVBlTBABEye7EEm6gAEx7p1tbvz8';
-        const ALLOWED_ADMIN_EMAILS = ['omkale422@gmail.com'];
+        const SUPABASE_URL = (window.CONFIG && window.CONFIG.SUPABASE_URL) ? window.CONFIG.SUPABASE_URL : 'https://xszkwltrgfhtpifnhohg.supabase.co';
+        const SUPABASE_ANON_KEY = (window.CONFIG && window.CONFIG.SUPABASE_ANON_KEY) ? window.CONFIG.SUPABASE_ANON_KEY : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzemt3bHRyZ2ZodHBpZm5ob2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQxMDMsImV4cCI6MjA5NDk1MDEwM30.9bgZrj8os4cxWM-pVBlTBABEye7EEm6gAEx7p1tbvz8';
+        const ALLOWED_ADMIN_EMAILS = (window.CONFIG && window.CONFIG.ALLOWED_ADMIN_EMAILS) ? window.CONFIG.ALLOWED_ADMIN_EMAILS : ['omkale422@gmail.com'];
 
         let supabaseClient = null;
 
@@ -740,9 +755,9 @@
         }
 
         function getAdminToken() {
-            const token = localStorage.getItem('kendra_admin_token');
+            const token = (window.CONFIG && window.CONFIG.ADMIN_TOKEN) ? window.CONFIG.ADMIN_TOKEN : localStorage.getItem('kendra_admin_token');
             if (!token) {
-                throw new Error("Missing admin write token. Add it in Settings before saving changes.");
+                throw new Error("Missing admin write token. Please configure ADMIN_TOKEN in config.js.");
             }
             return token;
         }
@@ -1999,15 +2014,11 @@
         }
 
         async function syncGoogleReviews() {
-            const placeIdInput = document.getElementById('setting-place-id');
-            const apiKeyInput = document.getElementById('setting-api-key');
-            
-            const placeId = placeIdInput ? placeIdInput.value.trim() : "";
-            
-            let apiKey = (apiKeyInput ? apiKeyInput.value.trim() : "") || localStorage.getItem('kendra_google_api_key') || DEFAULT_GOOGLE_API_KEY;
+            const placeId = (window.CONFIG && window.CONFIG.PLACE_ID) || (document.getElementById('setting-place-id') || {}).value || localStorage.getItem('kendra_google_place_id') || "";
+            const apiKey = (window.CONFIG && window.CONFIG.GOOGLE_MAPS_KEY) || (document.getElementById('setting-api-key') || {}).value || localStorage.getItem('kendra_google_api_key') || DEFAULT_GOOGLE_API_KEY;
             
             if (!placeId || !apiKey) {
-                alert("Error: Missing Place ID or API Key.\n\nPlease configure it in the Settings tab.");
+                alert("Error: Missing Place ID or API Key.\n\nPlease configure it in config.js.");
                 return;
             }
 
@@ -2084,25 +2095,13 @@
         }
 
         async function saveSettings() {
-            const placeId = document.getElementById('setting-place-id').value;
-            const apiKey = document.getElementById('setting-api-key').value;
-            const adminToken = document.getElementById('setting-admin-token').value;
             const kendraName = (document.getElementById('setting-kendra-name') || {}).value || '';
             const vleName = (document.getElementById('setting-vle-name') || {}).value || '';
             const cscId = (document.getElementById('setting-csc-id') || {}).value || '';
-            const whatsappToken = (document.getElementById('setting-whatsapp-token') || {}).value || '';
             
-            localStorage.setItem('kendra_google_place_id', placeId);
-            if (apiKey) {
-                localStorage.setItem('kendra_google_api_key', apiKey);
-            }
-            if (adminToken) {
-                localStorage.setItem('kendra_admin_token', adminToken);
-            }
             if (kendraName) localStorage.setItem('kendra_kendra_name', kendraName);
             if (vleName) localStorage.setItem('kendra_vle_name', vleName);
             if (cscId) localStorage.setItem('kendra_csc_id', cscId);
-            if (whatsappToken) localStorage.setItem('kendra_whatsapp_token', whatsappToken);
 
             initSupabaseClient();
 
@@ -2128,9 +2127,9 @@
                     kendra_kendra_name: kendraName,
                     kendra_vle_name: vleName,
                     kendra_csc_id: cscId,
-                    kendra_google_place_id: placeId,
-                    kendra_google_api_key: apiKey,
-                    whatsapp_permanent_token: whatsappToken
+                    kendra_google_place_id: (window.CONFIG && window.CONFIG.PLACE_ID) || '',
+                    kendra_google_api_key: (window.CONFIG && window.CONFIG.GOOGLE_MAPS_KEY) || '',
+                    whatsapp_permanent_token: (window.CONFIG && window.CONFIG.WHATSAPP_TOKEN) || ''
                 }});
                 btn.textContent = "Saved (server)";
                 btn.classList.remove('bg-gray-400');
@@ -2152,26 +2151,14 @@
 
         // Initialize settings on load
         document.addEventListener('DOMContentLoaded', async () => {
-            const savedPlaceId = localStorage.getItem('kendra_google_place_id');
-            const savedApiKey = localStorage.getItem('kendra_google_api_key');
-            const savedAdminToken = localStorage.getItem('kendra_admin_token');
             const savedKendraName = localStorage.getItem('kendra_kendra_name');
             const savedVleName = localStorage.getItem('kendra_vle_name');
+            const savedCsc = localStorage.getItem('kendra_csc_id');
+
             globalServicesData = await fetchPublicServicesCatalog();
             renderAdminServices();
             populateServiceSelectOptions();
-            if (savedPlaceId) {
-                const el = document.getElementById('setting-place-id');
-                if (el) el.value = savedPlaceId;
-            }
-            if (savedApiKey) {
-                const el = document.getElementById('setting-api-key');
-                if (el) el.value = savedApiKey;
-            }
-            if (savedAdminToken) {
-                const el = document.getElementById('setting-admin-token');
-                if (el) el.value = savedAdminToken;
-            }
+
             if (savedKendraName) {
                 const el = document.getElementById('setting-kendra-name');
                 if (el) el.value = savedKendraName;
@@ -2184,26 +2171,46 @@
                 const pName = document.getElementById('profile-name'); if (pName) pName.textContent = savedVleName;
                 const pAvatar = document.getElementById('profile-avatar'); if (pAvatar) pAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(savedVleName)}&background=C9A84C&color=fff`;
             }
-            const savedCsc = localStorage.getItem('kendra_csc_id');
             if (savedCsc) {
                 const el = document.getElementById('setting-csc-id'); if (el) el.value = savedCsc;
                 const pCsc = document.getElementById('profile-csc'); if (pCsc) pCsc.textContent = savedCsc;
             }
 
-            const savedWaToken = localStorage.getItem('kendra_whatsapp_token');
-            if (savedWaToken) {
-                const el = document.getElementById('setting-whatsapp-token');
-                if (el) el.value = savedWaToken;
-            }
-            
-            const webhookUrlEl = document.getElementById('setting-webhook-url');
-            if (webhookUrlEl) webhookUrlEl.value = SCRIPT_URL;
+            // Populate System Credentials card from CONFIG
+            const webhookUrlEl = document.getElementById('info-webhook-url');
+            if (webhookUrlEl) webhookUrlEl.textContent = (window.CONFIG && window.CONFIG.APPS_SCRIPT_URL) || 'Not Configured';
 
-            // If an admin token exists, try to load authoritative settings from the server
+            const webhookVerifyEl = document.getElementById('info-webhook-verify');
+            if (webhookVerifyEl) webhookVerifyEl.textContent = (window.CONFIG && window.CONFIG.WEBHOOK_VERIFY_TOKEN) || 'mseva_chatbot_secure_token';
+
+            const placeIdEl = document.getElementById('info-place-id');
+            if (placeIdEl) placeIdEl.textContent = (window.CONFIG && window.CONFIG.PLACE_ID) || 'Not Configured';
+
+            const mapsKeyEl = document.getElementById('info-maps-key');
+            if (mapsKeyEl) {
+                const rawKey = (window.CONFIG && window.CONFIG.GOOGLE_MAPS_KEY) || '';
+                if (rawKey) {
+                    mapsKeyEl.textContent = rawKey.length > 12 ? `${rawKey.substring(0, 8)}...${rawKey.substring(rawKey.length - 8)}` : 'Active';
+                } else {
+                    mapsKeyEl.textContent = 'Not Configured';
+                }
+            }
+
+            const adminTokenEl = document.getElementById('info-admin-token');
+            if (adminTokenEl) {
+                const rawToken = (window.CONFIG && window.CONFIG.ADMIN_TOKEN) || '';
+                if (rawToken) {
+                    adminTokenEl.textContent = rawToken.length > 8 ? `${rawToken.substring(0, 6)}...${rawToken.substring(rawToken.length - 6)}` : 'Secure';
+                } else {
+                    adminTokenEl.textContent = 'Not Configured';
+                }
+            }
+
+            // Try to load authoritative settings from the server
             try {
+                const savedAdminToken = getAdminToken();
                 if (savedAdminToken) {
                     const serverSettings = await apiGet({ action: 'settings' });
-                    // merge server settings into inputs and sidebar
                     if (serverSettings && typeof serverSettings === 'object') {
                         if (serverSettings.kendra_kendra_name) {
                             const el = document.getElementById('setting-kendra-name'); if (el) el.value = serverSettings.kendra_kendra_name;
@@ -2214,18 +2221,9 @@
                             const el = document.getElementById('setting-vle-name'); if (el) el.value = serverSettings.kendra_vle_name;
                             localStorage.setItem('kendra_vle_name', serverSettings.kendra_vle_name);
                         }
-                        if (serverSettings.kendra_google_place_id) {
-                            const el = document.getElementById('setting-place-id'); if (el) el.value = serverSettings.kendra_google_place_id;
-                            localStorage.setItem('kendra_google_place_id', serverSettings.kendra_google_place_id);
-                        }
-                        if (serverSettings.kendra_google_api_key) {
-                            const el = document.getElementById('setting-api-key'); if (el) el.value = serverSettings.kendra_google_api_key;
-                            localStorage.setItem('kendra_google_api_key', serverSettings.kendra_google_api_key);
-                        }
-                        const serverWaToken = serverSettings.whatsapp_permanent_token || serverSettings.kendra_whatsapp_token;
-                        if (serverWaToken) {
-                            const el = document.getElementById('setting-whatsapp-token'); if (el) el.value = serverWaToken;
-                            localStorage.setItem('kendra_whatsapp_token', serverWaToken);
+                        if (serverSettings.kendra_csc_id) {
+                            const el = document.getElementById('setting-csc-id'); if (el) el.value = serverSettings.kendra_csc_id;
+                            localStorage.setItem('kendra_csc_id', serverSettings.kendra_csc_id);
                         }
                     }
                 }
