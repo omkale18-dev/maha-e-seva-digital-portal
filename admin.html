@@ -1,0 +1,2254 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Aaple Sarkar Maha e-Seva</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['DM Sans', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        primary: '#0a1f5c',
+                        secondary: '#C9A84C',
+                        'light-gold': '#E8C97A',
+                        'primary-light': '#1e3a8a',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'slide-in-right': 'slideInRight 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(-20px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            /* Subtle background pattern */
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px -1px rgba(10, 31, 92, 0.05), 0 2px 4px -1px rgba(10, 31, 92, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(10, 31, 92, 0.1), 0 10px 10px -5px rgba(201, 168, 76, 0.2);
+            border-color: rgba(201, 168, 76, 0.5);
+        }
+
+        /* Sidebar active state */
+        .sidebar-active {
+            background: linear-gradient(135deg, #0a1f5c 0%, #1e3a8a 100%);
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(10, 31, 92, 0.3);
+            transform: scale(1.02);
+        }
+        .sidebar-active .material-symbols-outlined { color: #C9A84C; }
+
+        .sidebar-link {
+            transition: all 0.3s ease;
+        }
+        .sidebar-link:hover:not(.sidebar-active) {
+            background: rgba(10, 31, 92, 0.05);
+            color: #0a1f5c;
+            transform: translateX(4px);
+        }
+
+        /* Status Badges */
+        .status-badge { position: relative; overflow: hidden; }
+        .status-badge::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 100% { left: 200%; } }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Decorative blobs */
+        .blob-1 { position: fixed; top: -100px; left: -100px; width: 400px; height: 400px; background: rgba(201, 168, 76, 0.15); border-radius: 50%; filter: blur(60px); z-index: -1; pointer-events: none; }
+        .blob-2 { position: fixed; bottom: -150px; right: -50px; width: 500px; height: 500px; background: rgba(10, 31, 92, 0.1); border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none; }
+    </style>
+</head>
+<body class="text-gray-800 font-sans h-screen flex overflow-hidden">
+
+    <!-- Authentication Overlay -->
+    <div id="auth-overlay" class="fixed inset-0 bg-[#F8F9FA] z-[100] flex items-center justify-center transition-opacity duration-500">
+        <div class="glass-card p-10 rounded-3xl max-w-sm w-full mx-4 border border-white shadow-2xl flex flex-col items-center animate-fade-in-up">
+            <div class="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                <span class="material-symbols-outlined text-4xl text-primary">lock</span>
+            </div>
+            <h2 class="text-2xl font-display font-bold text-primary mb-2">Admin Login</h2>
+            <p class="text-primary/60 text-sm font-medium mb-6 text-center">Sign in with your authorized admin email.</p>
+            
+            <form id="auth-form" onsubmit="checkAuth(event)" class="w-full space-y-4">
+                <div>
+                    <input type="email" id="auth-email" placeholder="Admin Email" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-primary focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all mb-3" required>
+                    <input type="password" id="auth-pass" placeholder="Password" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-primary focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all" required>
+                    <p id="auth-error" class="text-red-500 text-xs font-bold text-center mt-3 hidden">Login failed. Check email/password and allowed admin email.</p>
+                    <p id="auth-config-help" class="text-amber-600 text-xs font-bold text-center mt-3 hidden">Supabase is not configured. Add URL, Anon Key, and Allowed Email in code.</p>
+                    <p id="auth-forgot-msg" class="text-xs font-bold text-center mt-2 hidden"></p>
+                </div>
+                <button type="submit" id="auth-btn" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm hover:bg-primary-light transition-all shadow-md flex justify-center items-center gap-2">
+                    <span class="material-symbols-outlined text-sm hidden" id="auth-spinner" style="animation: spin 1s linear infinite;">refresh</span>
+                    <span id="auth-btn-text">Secure Login</span>
+                </button>
+                <button type="button" id="auth-forgot-btn" onclick="sendPasswordReset()" class="w-full text-xs text-secondary hover:text-primary font-bold transition-colors">Forgot password?</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Decorative Background -->
+    <div class="blob-1 animate-pulse-slow"></div>
+    <div class="blob-2 animate-pulse-slow" style="animation-delay: 1.5s;"></div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-40 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="glass-panel w-72 h-full flex flex-col fixed md:relative z-50 transition-transform duration-400 ease-out -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+        
+        <!-- Logo Area -->
+        <div class="h-24 flex items-center px-6 border-b border-gray-200/50 shrink-0 justify-between md:justify-start">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-3 shrink-0" aria-label="Maha e-Seva Kendra home">
+                    <img alt="Maha e-Seva Kendra Logo" class="nav-logo object-contain w-12 h-12" src="logo.jpg"/>
+                    <span class="brand-copy hidden sm:block pl-2 leading-tight">
+                        <span class="block font-display font-bold text-primary leading-tight text-lg">Maha e-Seva Kendra</span>
+                        <span class="block text-xs text-secondary">Mol</span>
+                    </span>
+                </a>
+            </div>
+            <button class="md:hidden text-primary hover:text-secondary transition-colors" onclick="toggleSidebar()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 overflow-y-auto py-8 px-4 space-y-2">
+            <p class="px-4 text-[10px] font-bold text-primary/50 uppercase tracking-widest mb-3 animate-slide-in-right" style="animation-delay: 0.1s;">Main Menu</p>
+            
+            <a href="#" id="nav-dashboard" onclick="switchTab('dashboard')" class="nav-item sidebar-active flex items-center gap-4 px-4 py-3.5 rounded-xl font-medium text-sm animate-slide-in-right" style="animation-delay: 0.2s;">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+            
+            <a href="#" id="nav-applications" onclick="switchTab('applications')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.3s;">
+                <span class="material-symbols-outlined">folder_shared</span>
+                Applications
+                <span id="nav-badge" class="ml-auto bg-red-100 text-red-600 py-1 px-2.5 rounded-full text-xs font-bold shadow-sm hidden">0</span>
+            </a>
+            
+            <a href="#" id="nav-customers" onclick="switchTab('customers')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.4s;">
+                <span class="material-symbols-outlined">group</span>
+                Customers
+            </a>
+            
+            <a href="#" id="nav-services" onclick="switchTab('services')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.5s;">
+                <span class="material-symbols-outlined">category</span>
+                Services Catalog
+            </a>
+            
+            <p class="px-4 text-[10px] font-bold text-primary/50 uppercase tracking-widest mb-3 mt-8 animate-slide-in-right" style="animation-delay: 0.6s;">Website Control</p>
+            
+            <a href="#" id="nav-gallery" onclick="switchTab('gallery')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.7s;">
+                <span class="material-symbols-outlined">collections</span>
+                Photo Gallery
+            </a>
+            <a href="#" id="nav-reviews" onclick="switchTab('reviews')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.8s;">
+                <span class="material-symbols-outlined">star_rate</span>
+                Manage Reviews
+            </a>
+
+            <p class="px-4 text-[10px] font-bold text-primary/50 uppercase tracking-widest mb-3 mt-8 animate-slide-in-right" style="animation-delay: 0.9s;">System</p>
+            <a href="#" id="nav-settings" onclick="switchTab('settings')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 1.0s;">
+                <span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+        </nav>
+
+        <!-- Bottom Profile -->
+        <div class="p-6 border-t border-gray-200/50 shrink-0 bg-white/30 backdrop-blur-md">
+            <div class="flex items-center gap-3">
+                <img id="profile-avatar" src="https://ui-avatars.com/api/?name=&background=C9A84C&color=fff" alt="Admin" class="w-12 h-12 rounded-full border-2 border-white shadow-md">
+                <div>
+                    <h4 id="profile-name" class="text-sm font-bold text-primary">Administrator</h4>
+                    <p id="profile-csc" class="text-xs text-primary/60 font-medium"></p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- Top Header -->
+        <header class="h-24 glass-panel border-b-0 border-gray-200/50 flex items-center justify-between px-6 lg:px-10 shrink-0 z-30 sticky top-0 shadow-sm">
+            <div class="flex items-center gap-6">
+                <button class="md:hidden w-10 h-10 flex items-center justify-center bg-white rounded-xl shadow-sm text-primary hover:bg-primary hover:text-white transition-colors" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu_open</span>
+                </button>
+                
+                <!-- Search Bar -->
+                <div class="hidden sm:flex items-center bg-white/80 backdrop-blur-md border border-white rounded-2xl px-5 py-3 w-72 lg:w-96 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] focus-within:ring-2 focus-within:ring-secondary/50 focus-within:border-secondary transition-all group">
+                    <span class="material-symbols-outlined text-primary/40 mr-3 group-focus-within:text-secondary transition-colors">search</span>
+                    <input type="text" id="search-input" onkeyup="runGlobalSearch()" placeholder="Search applications, customers, services..." class="bg-transparent border-none outline-none w-full text-sm text-primary placeholder-primary/40 font-medium">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 md:gap-6">
+                <div class="relative">
+                    <button id="notification-bell" onclick="toggleNotificationsPanel(event)" class="relative w-10 h-10 flex items-center justify-center bg-white rounded-full shadow-sm text-primary hover:scale-110 transition-transform" aria-label="Notifications">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse hidden"></span>
+                    </button>
+                    <div id="notification-panel" class="hidden absolute right-0 top-14 w-80 bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden z-50">
+                        <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                            <p class="text-sm font-bold text-primary">Notifications</p>
+                        </div>
+                        <div id="notification-list" class="max-h-72 overflow-y-auto">
+                            <div class="px-4 py-5 text-sm text-primary/60">No notifications yet.</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="openModal()" class="hidden md:flex ml-2 items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white px-6 py-3 rounded-2xl text-sm font-bold hover:shadow-lg hover:shadow-primary/30 transition-all hover:-translate-y-0.5">
+                    <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                    <span>New Application</span>
+                </button>
+                <button onclick="logoutAdmin()" class="ml-2 items-center gap-2 bg-red-50 text-red-600 px-4 py-2.5 rounded-2xl text-sm font-bold hover:bg-red-100 transition-all flex">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Dashboard Content -->
+        <div id="view-dashboard" class="flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-7xl mx-auto space-y-10">
+                
+                <!-- Page Title -->
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 animate-fade-in-up">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-primary mb-2">Dashboard Overview</h2>
+                        <p class="text-primary/60 text-sm font-medium">Welcome back, Omkar! Here is your business snapshot for today.</p>
+                    </div>
+                    <div class="glass-card px-5 py-2.5 rounded-xl border border-white flex items-center gap-3">
+                        <span class="material-symbols-outlined text-secondary">calendar_month</span>
+                        <span id="current-date" class="font-bold text-primary text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Stats Cards (Hidden on Applications Tab) -->
+                <div id="dashboard-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card 1 -->
+                    <div class="glass-card p-6 rounded-3xl animate-fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 text-blue-600 rounded-2xl flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">description</span>
+                            </div>
+                        </div>
+                        <h3 class="text-primary/60 text-sm font-bold uppercase tracking-wider">Total Apps</h3>
+                        <p id="stat-total" class="text-4xl font-display font-bold text-primary mt-2">...</p>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="glass-card p-6 rounded-3xl animate-fade-in-up relative overflow-hidden" style="animation-delay: 0.2s;">
+                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-orange-100 rounded-full blur-2xl z-0"></div>
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <div class="w-14 h-14 bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 text-orange-600 rounded-2xl flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">pending_actions</span>
+                            </div>
+                        </div>
+                        <h3 class="text-primary/60 text-sm font-bold uppercase tracking-wider relative z-10">Pending Docs</h3>
+                        <p id="stat-pending" class="text-4xl font-display font-bold text-primary mt-2 relative z-10">...</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-card p-6 rounded-3xl animate-fade-in-up relative overflow-hidden" style="animation-delay: 0.3s;">
+                        <div class="absolute -right-6 -top-6 w-32 h-32 bg-green-100 rounded-full blur-2xl z-0"></div>
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <div class="w-14 h-14 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 text-green-600 rounded-2xl flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+                            </div>
+                        </div>
+                        <h3 class="text-primary/60 text-sm font-bold uppercase tracking-wider relative z-10">Completed</h3>
+                        <p id="stat-completed" class="text-4xl font-display font-bold text-primary mt-2 relative z-10">...</p>
+                    </div>
+
+                    <!-- Card 4 (Revenue) -->
+                    <div class="glass-card p-6 rounded-3xl animate-fade-in-up bg-gradient-to-br from-primary to-primary-light border-none text-white shadow-xl shadow-primary/20 relative overflow-hidden group" style="animation-delay: 0.4s;">
+                        <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform group-hover:scale-110 transition-transform duration-500">
+                            <span class="material-symbols-outlined text-9xl">account_balance</span>
+                        </div>
+                        <div class="flex justify-between items-start mb-6 relative z-10">
+                            <div class="w-14 h-14 bg-white/10 backdrop-blur-md border border-white/20 text-secondary rounded-2xl flex items-center justify-center shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+                            </div>
+                        </div>
+                        <h3 class="text-white/70 text-sm font-bold uppercase tracking-wider relative z-10">Monthly Revenue</h3>
+                        <p class="text-4xl font-display font-bold text-white mt-2 relative z-10 tracking-wide"><span class="text-secondary text-2xl align-top">&#8377;</span> <span id="stat-revenue">...</span></p>
+                    </div>
+                </div>
+
+                <!-- Recent Applications Table -->
+                <div class="glass-card rounded-3xl border border-white shadow-sm overflow-hidden flex flex-col animate-fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-8 bg-secondary rounded-full"></div>
+                            <h3 class="text-xl font-display font-bold text-primary">Recent Applications</h3>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <select id="status-filter" onchange="filterTable()" class="bg-white border border-gray-100 text-primary text-sm font-bold rounded-xl px-4 py-2 outline-none shadow-sm cursor-pointer hover:border-secondary transition-colors">
+                                <option value="all">All Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="processing">Processing</option>
+                                <option value="missing docs">Missing Docs</option>
+                            </select>
+                            <button class="text-secondary text-sm font-bold hover:text-primary transition-colors flex items-center gap-1 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm hidden md:flex">
+                                View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[800px]">
+                            <thead>
+                                <tr class="bg-primary/5 border-b border-gray-100 text-[11px] uppercase tracking-widest text-primary/60 font-bold">
+                                    <th class="px-8 py-5 rounded-tl-lg">App ID</th>
+                                    <th class="px-6 py-5">Customer Profile</th>
+                                    <th class="px-6 py-5">Service Category</th>
+                                    <th class="px-6 py-5">Date</th>
+                                    <th class="px-6 py-5">Status</th>
+                                    <th class="px-8 py-5 text-right rounded-tr-lg">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applications-table-body" class="divide-y divide-gray-100/50 text-sm bg-white/40">
+                                <!-- Dynamic rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer area -->
+                <div class="pt-8 pb-4 flex justify-between items-center text-xs font-medium text-primary/40 animate-fade-in-up" style="animation-delay: 0.6s;">
+                    <p>&copy; 2026 Aaple Sarkar Maha e-Seva Kendra, Mol.</p>
+                    <p>Designed for Digital Empowerment</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Customers View -->
+        <div id="view-customers" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-7xl mx-auto space-y-8">
+                <div>
+                    <h2 class="text-3xl font-display font-bold text-primary mb-2">Customer Directory</h2>
+                    <p class="text-primary/60 text-sm font-medium">All your registered clients, automatically generated from your applications.</p>
+                </div>
+                <div id="customers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Dynamic Customers will load here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Services View -->
+        <div id="view-services" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-7xl mx-auto space-y-8">
+                <div class="flex flex-col md:flex-row justify-between md:items-end gap-4">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-primary mb-2">Services Catalog</h2>
+                        <p class="text-primary/60 text-sm font-medium">Manage pricing and availability of your services.</p>
+                    </div>
+                    <button onclick="addService()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-primary-light transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">add</span> Add Service
+                    </button>
+                </div>
+                <div id="services-admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+
+        <!-- Photo Gallery View -->
+        <div id="view-gallery" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-7xl mx-auto space-y-8">
+                <div class="flex flex-col md:flex-row justify-between md:items-end gap-4">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-primary mb-2">Photo Gallery</h2>
+                        <p class="text-primary/60 text-sm font-medium">Manage images shown on your public website.</p>
+                    </div>
+                    <button onclick="addGalleryImage()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-primary-light transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">add_link</span> Add Photo URL
+                    </button>
+                </div>
+                <div id="gallery-admin-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Dynamic Gallery Admin -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Reviews View -->
+        <div id="view-reviews" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-5xl mx-auto space-y-8">
+                <div class="flex flex-col md:flex-row justify-between md:items-end gap-4">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-primary mb-2">Manage Reviews</h2>
+                        <p class="text-primary/60 text-sm font-medium">Approve or reject customer testimonials before they appear on the website.</p>
+                    </div>
+                    <button onclick="syncGoogleReviews()" id="sync-reviews-btn" class="bg-[#4285F4] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-[#3367d6] transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm hidden" id="sync-spinner" style="animation: spin 1s linear infinite;">refresh</span>
+                        <span class="material-symbols-outlined text-[18px]" id="sync-icon">sync</span>
+                        <span id="sync-text">Sync from Google Maps</span>
+                    </button>
+                </div>
+                
+                <div id="reviews-admin-list" class="space-y-4">
+                    <!-- Dynamic Reviews Admin -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="view-settings" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
+            <div class="max-w-3xl mx-auto space-y-8">
+                <div>
+                    <h2 class="text-3xl font-display font-bold text-primary mb-2">System Settings</h2>
+                    <p class="text-primary/60 text-sm font-medium">Configure your Kendra details for the website.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl border border-white space-y-6">
+                    <div class="flex items-center gap-6 pb-6 border-b border-gray-100">
+                        <img src="https://ui-avatars.com/api/?name=Omkar+Kale&background=C9A84C&color=fff" class="w-20 h-20 rounded-2xl shadow-sm">
+                        <div>
+                            <button class="bg-gray-100 text-primary px-4 py-2 rounded-lg text-sm font-bold mb-2 hover:bg-gray-200 transition-colors">Change Profile</button>
+                            <p class="text-xs text-primary/50">Admin avatar and logo</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                                    <label class="block text-xs font-bold text-primary/70 mb-2">Kendra Name</label>
+                                    <input id="setting-kendra-name" type="text" value="Aaple Sarkar Maha e-Seva Kendra" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-primary/70 mb-2">VLE Name</label>
+                            <input id="setting-vle-name" type="text" value="Omkar Kale" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-primary/70 mb-2">CSC ID / Registration No.</label>
+                            <input type="text" id="setting-csc-id" value="MH-ESC-452901" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50">
+                        </div>
+                        <div class="md:col-span-2 border-t border-gray-100 pt-6">
+                            <h3 class="text-sm font-bold text-primary mb-1">WhatsApp Cloud API (Free Two-Way Chatbot)</h3>
+                            <p class="text-xs text-primary/60 mb-4">Connect Meta Developer Account directly with Google Apps Script Webhook.</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-primary/70 mb-2">WhatsApp Permanent Access Token <span class="text-[10px] text-gray-400 font-normal ml-2">(from Meta Business Suite)</span></label>
+                            <input type="password" id="setting-whatsapp-token" placeholder="EAAb..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50 font-mono text-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-primary/70 mb-2">Webhook Callback URL <span class="text-[10px] text-gray-400 font-normal ml-2">(Paste in Meta Dashboard)</span></label>
+                            <input type="text" id="setting-webhook-url" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none font-mono text-gray-500 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-primary/70 mb-2">Webhook Verify Token <span class="text-[10px] text-gray-400 font-normal ml-2">(Use in Meta Dashboard)</span></label>
+                            <input type="text" id="setting-webhook-verify" value="mseva_chatbot_secure_token" readonly class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none font-mono text-gray-500 cursor-not-allowed">
+                        </div>
+                        <div class="md:col-span-2 border-t border-gray-100 pt-6">
+                            <h3 class="text-sm font-bold text-primary mb-1">Google Maps & Review Settings</h3>
+                            <p class="text-xs text-primary/60 mb-4">Configure review sync using Google Places API key.</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-primary/70 mb-2">Google Maps Place ID <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for Review Sync)</span></label>
+                            <input type="text" id="setting-place-id" placeholder="e.g. ChIJJYGYXNi1wzsRvm4uXm4aYZQ" value="ChIJJYGYXNi1wzsRvm4uXm4aYZQ" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4285F4] font-mono text-gray-600 mb-2">
+                            
+                            <label class="block text-xs font-bold text-primary/70 mb-2 mt-4">Google Maps API Key <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for Review Sync)</span></label>
+                            <div class="flex gap-2">
+                                <input type="password" id="setting-api-key" placeholder="AIzaSy..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4285F4] font-mono text-gray-600">
+                                <button onclick="saveSettings()" class="bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:bg-primary-light transition-colors whitespace-nowrap">Save Settings</button>
+                            </div>
+                            <label class="block text-xs font-bold text-primary/70 mb-2 mt-4">Admin Write Token <span class="text-[10px] text-gray-400 font-normal ml-2">(Required for protected add/edit requests)</span></label>
+                            <input type="password" id="setting-admin-token" placeholder="Paste your Apps Script admin token" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-secondary/50 font-mono text-gray-600">
+                            <div class="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                                <p class="text-xs font-bold text-amber-800">Supabase Auth Configuration</p>
+                                <p class="text-[11px] text-amber-700 mt-1">Configured directly in code. Edit <span class="font-mono">SUPABASE_URL</span>, <span class="font-mono">SUPABASE_ANON_KEY</span>, and <span class="font-mono">ALLOWED_ADMIN_EMAILS</span> in <span class="font-mono">admin.html</span>.</p>
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-2">Find your Place ID using the Google Maps Platform Place ID Finder and generate an API key in Google Cloud Console.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- New Application Modal -->
+    <div id="new-app-modal" class="fixed inset-0 bg-primary/60 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-xl font-display font-bold text-primary">New Application</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="new-app-form" onsubmit="submitForm(event)" class="p-8 space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Customer Name</label>
+                    <input type="text" id="cust-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Phone Number</label>
+                    <input type="tel" id="cust-phone" required pattern="[0-9]{10}" placeholder="10 digit number" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Service Required</label>
+                    <select id="cust-service" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                        <option value="">Select a service...</option>
+                        <option value="PAN Card">PAN Card</option>
+                        <option value="Income Certificate">Income Certificate</option>
+                        <option value="Aadhaar Update">Aadhaar Update</option>
+                        <option value="7/12 Extract">7/12 Extract</option>
+                        <option value="Caste Certificate">Caste Certificate</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Status</label>
+                        <select id="cust-status" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                            <option value="Processing">Processing</option>
+                            <option value="Missing Docs">Missing Docs</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Paid Amount (&#8377;)</label>
+                        <input type="number" id="cust-paid" required min="0" value="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-6 py-3 text-gray-500 font-bold text-sm hover:bg-gray-100 rounded-xl transition-colors">Cancel</button>
+                    <button type="submit" id="submit-btn" class="px-6 py-3 bg-primary text-white font-bold text-sm rounded-xl hover:bg-primary-light shadow-md shadow-primary/20 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm hidden" id="spinner" style="animation: spin 1s linear infinite;">refresh</span>
+                        <span id="btn-text">Save Application</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Application Modal -->
+    <div id="edit-app-modal" class="fixed inset-0 bg-primary/60 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="edit-modal-content">
+            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-xl font-display font-bold text-primary">Edit Application</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="edit-app-form" onsubmit="submitEditForm(event)" class="p-8 space-y-5">
+                <input type="hidden" id="edit-app-id">
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Customer Name</label>
+                    <input type="text" id="edit-cust-name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Phone Number</label>
+                    <input type="tel" id="edit-cust-phone" required pattern="[0-9]{10}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-primary/70 mb-1">Service Required</label>
+                    <select id="edit-cust-service" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                        <option value="PAN Card">PAN Card</option>
+                        <option value="Income Certificate">Income Certificate</option>
+                        <option value="Aadhaar Update">Aadhaar Update</option>
+                        <option value="7/12 Extract">7/12 Extract</option>
+                        <option value="Caste Certificate">Caste Certificate</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Status</label>
+                        <select id="edit-cust-status" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                            <option value="Processing">Processing</option>
+                            <option value="Missing Docs">Missing Docs</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Paid Amount (&#8377;)</label>
+                        <input type="number" id="edit-cust-paid" required min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeEditModal()" class="px-6 py-3 text-gray-500 font-bold text-sm hover:bg-gray-100 rounded-xl transition-colors">Cancel</button>
+                    <button type="submit" id="edit-submit-btn" class="px-6 py-3 bg-secondary text-white font-bold text-sm rounded-xl hover:bg-yellow-600 shadow-md shadow-secondary/20 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm hidden" id="edit-spinner" style="animation: spin 1s linear infinite;">refresh</span>
+                        <span id="edit-btn-text">Update</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div id="service-modal" class="fixed inset-0 bg-primary/60 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="service-modal-content">
+            <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 id="service-modal-title" class="text-xl font-display font-bold text-primary">Add Service</h3>
+                <button onclick="closeServiceModal()" class="text-gray-400 hover:text-red-500 transition-colors" aria-label="Close service form">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="service-form" onsubmit="submitServiceForm(event)" class="p-8 space-y-5">
+                <input type="hidden" id="service-edit-index" value="">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Service Name (English)</label>
+                        <input type="text" id="service-title-en" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Service Name (Marathi)</label>
+                        <input type="text" id="service-title-mr" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Description (English)</label>
+                        <textarea id="service-desc-en" rows="3" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Description (Marathi)</label>
+                        <textarea id="service-desc-mr" rows="3" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all"></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Icon</label>
+                        <input type="text" id="service-icon" value="apps" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all" placeholder="apps">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Accent</label>
+                        <select id="service-accent" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                            <option value="primary">Primary</option>
+                            <option value="blue">Blue</option>
+                            <option value="orange">Orange</option>
+                            <option value="green">Green</option>
+                            <option value="purple">Purple</option>
+                            <option value="red">Red</option>
+                            <option value="rose">Rose</option>
+                            <option value="amber">Amber</option>
+                            <option value="indigo">Indigo</option>
+                            <option value="teal">Teal</option>
+                            <option value="emerald">Emerald</option>
+                            <option value="pink">Pink</option>
+                            <option value="cyan">Cyan</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="slate">Slate</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Price (INR)</label>
+                        <input type="number" id="service-price" min="0" value="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-primary/70 mb-1">Status</label>
+                        <select id="service-status" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeServiceModal()" class="px-6 py-3 text-gray-500 font-bold text-sm hover:bg-gray-100 rounded-xl transition-colors">Cancel</button>
+                    <button type="submit" id="service-submit-btn" class="px-6 py-3 bg-primary text-white font-bold text-sm rounded-xl hover:bg-primary-light shadow-md shadow-primary/20 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm hidden" id="service-spinner" style="animation: spin 1s linear infinite;">refresh</span>
+                        <span id="service-btn-text">Save Service</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
+
+        const SUPABASE_URL = 'https://xszkwltrgfhtpifnhohg.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzemt3bHRyZ2ZodHBpZm5ob2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzQxMDMsImV4cCI6MjA5NDk1MDEwM30.9bgZrj8os4cxWM-pVBlTBABEye7EEm6gAEx7p1tbvz8';
+        const ALLOWED_ADMIN_EMAILS = ['omkale422@gmail.com'];
+
+        let supabaseClient = null;
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char]));
+        }
+
+        function safeImageUrl(value) {
+            try {
+                const url = new URL(String(value), window.location.href);
+                return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+            } catch {
+                return '';
+            }
+        }
+
+        function getAdminToken() {
+            const token = localStorage.getItem('kendra_admin_token');
+            if (!token) {
+                throw new Error("Missing admin write token. Add it in Settings before saving changes.");
+            }
+            return token;
+        }
+
+        async function apiGet(params = {}) {
+            const url = new URL(SCRIPT_URL);
+            Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+            url.searchParams.set('token', getAdminToken());
+            const response = await fetch(url.toString());
+            const data = await response.json();
+            if (!response.ok || data.result === 'error') {
+                throw new Error(data.message || `Request failed with status ${response.status}`);
+            }
+            return data;
+        }
+
+        async function apiPost(payload) {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({ token: getAdminToken(), ...payload })
+            });
+            const data = await response.json();
+            if (!response.ok || data.result === 'error') {
+                throw new Error(data.message || `Request failed with status ${response.status}`);
+            }
+            return data;
+        }
+
+        function getAllowedAdminEmails() {
+            return (Array.isArray(ALLOWED_ADMIN_EMAILS) ? ALLOWED_ADMIN_EMAILS : [])
+                .map((email) => String(email || '').trim().toLowerCase())
+                .filter(Boolean);
+        }
+
+        function getSupabaseConfig() {
+            return {
+                url: (SUPABASE_URL || '').trim(),
+                anonKey: (SUPABASE_ANON_KEY || '').trim(),
+                allowedEmails: getAllowedAdminEmails()
+            };
+        }
+
+        function normalizeSupabaseProjectUrl(rawUrl) {
+            const value = String(rawUrl || '').trim();
+            if (!value) return '';
+            try {
+                const parsed = new URL(value);
+                parsed.pathname = parsed.pathname
+                    .replace(/\/rest\/v1\/?$/i, '/')
+                    .replace(/\/auth\/v1\/?$/i, '/')
+                    .replace(/\/+/g, '/');
+                return parsed.origin + (parsed.pathname === '/' ? '' : parsed.pathname.replace(/\/$/, ''));
+            } catch {
+                return '';
+            }
+        }
+
+        function isAllowedAdminEmail(email) {
+            const allowedEmails = getAllowedAdminEmails();
+            const candidate = String(email || '').trim().toLowerCase();
+            return allowedEmails.includes(candidate);
+        }
+
+        function hideAuthOverlay() {
+            const authOverlay = document.getElementById('auth-overlay');
+            if (!authOverlay) return;
+            authOverlay.classList.add('opacity-0');
+            setTimeout(() => {
+                authOverlay.classList.add('hidden');
+            }, 500);
+        }
+
+        function showAuthOverlay() {
+            const authOverlay = document.getElementById('auth-overlay');
+            if (!authOverlay) return;
+            authOverlay.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                authOverlay.classList.remove('opacity-0');
+            });
+        }
+
+        function setAuthError(message) {
+            const errorMsg = document.getElementById('auth-error');
+            if (!errorMsg) return;
+            errorMsg.textContent = message;
+            errorMsg.classList.remove('hidden');
+        }
+
+        function clearAuthError() {
+            const errorMsg = document.getElementById('auth-error');
+            if (errorMsg) errorMsg.classList.add('hidden');
+        }
+
+        function setForgotMessage(message, isError = false) {
+            const messageEl = document.getElementById('auth-forgot-msg');
+            if (!messageEl) return;
+            messageEl.textContent = message;
+            messageEl.classList.remove('hidden');
+            messageEl.classList.toggle('text-red-500', Boolean(isError));
+            messageEl.classList.toggle('text-green-600', !isError);
+        }
+
+        function clearForgotMessage() {
+            const messageEl = document.getElementById('auth-forgot-msg');
+            if (!messageEl) return;
+            messageEl.classList.add('hidden');
+            messageEl.textContent = '';
+            messageEl.classList.remove('text-red-500', 'text-green-600');
+        }
+
+        function setAuthConfigHelp(visible) {
+            const help = document.getElementById('auth-config-help');
+            if (!help) return;
+            help.classList.toggle('hidden', !visible);
+        }
+
+        function initSupabaseClient() {
+            const { url, anonKey, allowedEmails } = getSupabaseConfig();
+            const normalizedUrl = normalizeSupabaseProjectUrl(url);
+            const authBtn = document.getElementById('auth-btn');
+            const authBtnText = document.getElementById('auth-btn-text');
+
+            if (!normalizedUrl || !anonKey || !allowedEmails.length || !window.supabase?.createClient) {
+                supabaseClient = null;
+                if (authBtn) authBtn.disabled = true;
+                if (authBtnText) authBtnText.textContent = 'Configure Supabase in Code';
+                setAuthConfigHelp(true);
+                return null;
+            }
+
+            supabaseClient = window.supabase.createClient(normalizedUrl, anonKey);
+            if (authBtn) authBtn.disabled = false;
+            if (authBtnText) authBtnText.textContent = 'Secure Login';
+            setAuthConfigHelp(false);
+            return supabaseClient;
+        }
+
+        async function ensureSupabaseSession() {
+            const client = initSupabaseClient();
+            if (!client) {
+                sessionStorage.removeItem('isAuthenticated');
+                showAuthOverlay();
+                return;
+            }
+
+            const { data, error } = await client.auth.getSession();
+            if (error || !data?.session) {
+                sessionStorage.removeItem('isAuthenticated');
+                showAuthOverlay();
+                return;
+            }
+
+            const sessionEmail = data.session.user?.email || '';
+            if (!isAllowedAdminEmail(sessionEmail)) {
+                await client.auth.signOut();
+                sessionStorage.removeItem('isAuthenticated');
+                showAuthOverlay();
+                setAuthError('This account is not allowed for admin access.');
+                return;
+            }
+
+            sessionStorage.setItem('isAuthenticated', 'true');
+            clearAuthError();
+            hideAuthOverlay();
+            fetchApplications();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            ensureSupabaseSession();
+        });
+
+        async function sendPasswordReset() {
+            const client = initSupabaseClient();
+            if (!client) {
+                setAuthError('Supabase config invalid. Use project URL like https://<project>.supabase.co');
+                return;
+            }
+
+            const inputEmail = ((document.getElementById('auth-email') || {}).value || '').trim().toLowerCase();
+            const targetEmail = inputEmail;
+
+            if (!targetEmail) {
+                setForgotMessage('Enter the email to receive reset link.', true);
+                return;
+            }
+
+            if (!isAllowedAdminEmail(targetEmail)) {
+                setForgotMessage('Reset is allowed only for configured admin emails.', true);
+                return;
+            }
+
+            const forgotBtn = document.getElementById('auth-forgot-btn');
+            const originalText = forgotBtn ? forgotBtn.textContent : 'Forgot password?';
+
+            clearAuthError();
+            clearForgotMessage();
+            if (forgotBtn) {
+                forgotBtn.disabled = true;
+                forgotBtn.textContent = 'Sending reset email...';
+            }
+
+            try {
+                const redirectTo = `${window.location.origin}${window.location.pathname}`;
+                const { error } = await client.auth.resetPasswordForEmail(targetEmail, { redirectTo });
+                if (error) {
+                    throw error;
+                }
+                setForgotMessage('Password reset email sent. Check inbox/spam.', false);
+            } catch (error) {
+                setForgotMessage(error.message || 'Unable to send reset email.', true);
+            } finally {
+                if (forgotBtn) {
+                    forgotBtn.disabled = false;
+                    forgotBtn.textContent = originalText;
+                }
+            }
+        }
+
+        async function checkAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const btn = document.getElementById('auth-btn');
+            const spinner = document.getElementById('auth-spinner');
+            const btnText = document.getElementById('auth-btn-text');
+
+            const client = initSupabaseClient();
+            if (!client) {
+                setAuthError('Supabase config invalid. Use project URL like https://<project>.supabase.co');
+                return;
+            }
+
+            if (!isAllowedAdminEmail(email)) {
+                setAuthError('Only configured admin emails can log in.');
+                return;
+            }
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = "Authenticating...";
+            clearAuthError();
+            clearForgotMessage();
+
+            try {
+                const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
+                if (error || !data?.session) {
+                    throw new Error(error?.message || 'Login failed.');
+                }
+
+                const signedEmail = data.session.user?.email || '';
+                if (!isAllowedAdminEmail(signedEmail)) {
+                    await client.auth.signOut();
+                    throw new Error('This account is not allowed for admin access.');
+                }
+
+                sessionStorage.setItem('isAuthenticated', 'true');
+                hideAuthOverlay();
+                fetchApplications();
+            } catch (error) {
+                setAuthError(error.message || 'Unable to authenticate.');
+                const inputs = document.getElementById('auth-form').getElementsByTagName('input');
+                for(let i=0; i<inputs.length; i++) {
+                    inputs[i].classList.add('border-red-500', 'bg-red-50');
+                }
+                
+                // Add a simple shake effect
+                btn.parentElement.style.transform = "translateX(-10px)";
+                setTimeout(() => btn.parentElement.style.transform = "translateX(10px)", 100);
+                setTimeout(() => btn.parentElement.style.transform = "translateX(-10px)", 200);
+                setTimeout(() => btn.parentElement.style.transform = "translateX(0)", 300);
+                
+                setTimeout(() => {
+                    for(let i=0; i<inputs.length; i++) {
+                        inputs[i].classList.remove('border-red-500', 'bg-red-50');
+                    }
+                }, 1000);
+                document.getElementById('auth-pass').value = '';
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = "Secure Login";
+            }
+        }
+
+        async function logoutAdmin() {
+            if (supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+            sessionStorage.removeItem('isAuthenticated');
+            showAuthOverlay();
+        }
+
+        let globalAppsData = []; // Store globally for customers page
+        let globalServicesData = [];
+
+        async function fetchApplications() {
+            const tableBody = document.getElementById('applications-table-body');
+            tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-primary/60 font-bold"><span class="material-symbols-outlined animate-spin mr-2 align-middle">progress_activity</span>Loading applications...</td></tr>`;
+            
+            try {
+                const data = await apiGet({ action: 'applications' });
+                globalAppsData = data; // save globally
+                
+                tableBody.innerHTML = ''; // Clear loading text
+                
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-primary/40 font-medium">No applications found. Add one above!</td></tr>`;
+                    updateStats(0, 0, 0, 0);
+                    renderCustomers();
+                    return;
+                }
+
+                let pending = 0;
+                let completed = 0;
+                let revenue = 0;
+
+                // Render in reverse so newest is at the top
+                data.reverse().forEach(app => {
+                    addTableRow(app);
+                    if (app.status === 'Completed') {
+                        completed++;
+                    } else {
+                        pending++;
+                    }
+                    if (app.paidAmount) {
+                        revenue += Number(app.paidAmount);
+                    }
+                });
+                
+                updateStats(data.length, pending, completed, revenue);
+                renderCustomers();
+                renderNotifications();
+                runGlobalSearch();
+                
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-red-400 font-bold">${escapeHtml(error.message || 'Error loading data. Make sure Google Script is updated!')}</td></tr>`;
+                renderNotifications();
+            }
+        }
+        
+        function renderCustomers() {
+            const grid = document.getElementById('customers-grid');
+            if(!grid) return;
+            
+            // Group applications by phone number to create unique customers
+            const customers = {};
+            globalAppsData.forEach(app => {
+                if(!customers[app.phone]) {
+                    customers[app.phone] = { name: app.name, phone: app.phone, count: 0, spent: 0 };
+                }
+                customers[app.phone].count++;
+                if(app.paidAmount) customers[app.phone].spent += Number(app.paidAmount);
+            });
+            
+            grid.innerHTML = '';
+            
+            if(Object.keys(customers).length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-primary/40 font-bold">No customers found.</div>`;
+                return;
+            }
+
+            Object.values(customers).forEach(c => {
+                let initials = escapeHtml(c.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase());
+                const customerName = escapeHtml(c.name);
+                const customerPhone = escapeHtml(c.phone);
+                grid.innerHTML += `
+                    <div class="glass-card p-6 rounded-3xl border border-white flex flex-col items-center text-center hover:-translate-y-1 transition-transform animate-fade-in-up">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 text-primary font-bold text-xl flex items-center justify-center mb-4 shadow-inner">${initials}</div>
+                        <h3 class="font-bold text-primary text-lg truncate w-full">${customerName}</h3>
+                        <p class="text-primary/60 text-sm font-medium mb-6">+91 ${customerPhone}</p>
+                        <div class="w-full flex justify-between border-t border-gray-100 pt-4 px-2">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Total Apps</p>
+                                <p class="font-bold text-primary">${c.count}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Total Paid</p>
+                                <p class="font-bold text-secondary">₹${c.spent.toLocaleString('en-IN')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function updateStats(total, pending, completed, revenue) {
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('stat-revenue').textContent = revenue.toLocaleString('en-IN');
+            
+            const badge = document.getElementById('nav-badge');
+            badge.textContent = total;
+            if (total > 0) badge.classList.remove('hidden');
+        }
+
+        // Search and Filter Logic
+        function filterTable() {
+            const searchInput = document.getElementById("search-input").value.toLowerCase();
+            const statusFilter = document.getElementById("status-filter").value.toLowerCase();
+            
+            const tableBody = document.getElementById("applications-table-body");
+            const tr = tableBody.getElementsByTagName("tr");
+            const previousEmpty = document.getElementById('apps-empty-search-row');
+            if (previousEmpty) previousEmpty.remove();
+
+            let visibleRows = 0;
+
+            for (let i = 0; i < tr.length; i++) {
+                const tds = tr[i].getElementsByTagName("td");
+                if(tds.length === 1) continue; // Skip loading/empty rows
+                
+                const rowText = tr[i].textContent.toLowerCase();
+                const statusText = tds[4].textContent.toLowerCase(); // Status column
+                
+                const matchesSearch = rowText.indexOf(searchInput) > -1;
+                const matchesStatus = statusFilter === 'all' || statusText.includes(statusFilter);
+                
+                if (matchesSearch && matchesStatus) {
+                    tr[i].style.display = "";
+                    visibleRows++;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+
+            const hasDataRows = Array.from(tr).some((row) => row.getElementsByTagName('td').length > 1);
+            if (hasDataRows && visibleRows === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.id = 'apps-empty-search-row';
+                emptyRow.innerHTML = `<td colspan="6" class="text-center py-8 text-primary/50 font-semibold">No applications match your search/filter.</td>`;
+                tableBody.appendChild(emptyRow);
+            }
+        }
+
+        function filterCustomers(query) {
+            const cards = document.querySelectorAll('#customers-grid .glass-card');
+            cards.forEach((card) => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function filterServices(query) {
+            const cards = document.querySelectorAll('#services-admin-grid .service-admin-card');
+            cards.forEach((card) => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function runGlobalSearch() {
+            const query = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+            const activeNav = document.querySelector('.nav-item.sidebar-active');
+            const activeTab = activeNav ? activeNav.id.replace('nav-', '') : 'dashboard';
+
+            if (activeTab === 'customers') {
+                filterCustomers(query);
+                return;
+            }
+
+            if (activeTab === 'services') {
+                filterServices(query);
+                return;
+            }
+
+            filterTable();
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notification-list');
+            const dot = document.getElementById('notification-dot');
+            if (!list || !dot) return;
+
+            const pendingDocs = globalAppsData.filter((app) => app.status === 'Missing Docs').length;
+            const processing = globalAppsData.filter((app) => app.status === 'Processing').length;
+            const completed = globalAppsData.filter((app) => app.status === 'Completed').length;
+            const alerts = [];
+
+            if (pendingDocs > 0) alerts.push({ tone: 'orange', text: `${pendingDocs} applications need missing documents.` });
+            if (processing > 0) alerts.push({ tone: 'blue', text: `${processing} applications are currently processing.` });
+            if (completed > 0) alerts.push({ tone: 'green', text: `${completed} applications are completed.` });
+
+            dot.classList.toggle('hidden', alerts.length === 0);
+
+            if (alerts.length === 0) {
+                list.innerHTML = `<div class="px-4 py-5 text-sm text-primary/60">All clear. No pending notifications.</div>`;
+                return;
+            }
+
+            list.innerHTML = alerts.map((item) => {
+                const classes = item.tone === 'orange'
+                    ? 'bg-orange-50 text-orange-700 border-orange-100'
+                    : item.tone === 'blue'
+                        ? 'bg-blue-50 text-blue-700 border-blue-100'
+                        : 'bg-green-50 text-green-700 border-green-100';
+
+                return `<div class="px-4 py-3 border-b border-gray-100 ${classes}"><p class="text-sm font-semibold">${escapeHtml(item.text)}</p></div>`;
+            }).join('');
+        }
+
+        function toggleNotificationsPanel(event) {
+            event.stopPropagation();
+            const panel = document.getElementById('notification-panel');
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (event) => {
+            const bell = document.getElementById('notification-bell');
+            const panel = document.getElementById('notification-panel');
+            if (!bell || !panel) return;
+
+            if (!panel.contains(event.target) && !bell.contains(event.target)) {
+                panel.classList.add('hidden');
+            }
+        });
+        
+        // Modal Logic
+        const modal = document.getElementById('new-app-modal');
+        const modalContent = document.getElementById('modal-content');
+        
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('new-app-form').reset();
+            }, 300);
+        }
+
+        // Edit Modal Logic
+        const editModal = document.getElementById('edit-app-modal');
+        const editModalContent = document.getElementById('edit-modal-content');
+
+        function openEditModal(appId, name, phone, service, status, paidAmount) {
+            document.getElementById('edit-app-id').value = appId;
+            document.getElementById('edit-cust-name').value = name;
+            document.getElementById('edit-cust-phone').value = phone;
+            document.getElementById('edit-cust-service').value = service;
+            document.getElementById('edit-cust-status').value = status;
+            document.getElementById('edit-cust-paid').value = paidAmount;
+
+            editModal.classList.remove('hidden');
+            setTimeout(() => {
+                editModal.classList.remove('opacity-0');
+                editModalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeEditModal() {
+            editModal.classList.add('opacity-0');
+            editModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                editModal.classList.add('hidden');
+            }, 300);
+        }
+
+        async function submitEditForm(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('edit-submit-btn');
+            const spinner = document.getElementById('edit-spinner');
+            const btnText = document.getElementById('edit-btn-text');
+            
+            spinner.classList.remove('hidden');
+            btnText.textContent = "Updating...";
+            btn.disabled = true;
+
+            const data = {
+                action: "edit",
+                appId: document.getElementById('edit-app-id').value,
+                name: document.getElementById('edit-cust-name').value,
+                phone: document.getElementById('edit-cust-phone').value,
+                service: document.getElementById('edit-cust-service').value,
+                status: document.getElementById('edit-cust-status').value,
+                paidAmount: document.getElementById('edit-cust-paid').value
+            };
+
+            try {
+                await apiPost(data);
+                
+                closeEditModal();
+                // Refresh table to show updated data
+                fetchApplications();
+                
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to update application. Please try again.");
+            } finally {
+                spinner.classList.add('hidden');
+                btnText.textContent = "Update";
+                btn.disabled = false;
+            }
+        }
+
+        // Submit Logic
+        async function submitForm(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const service = document.getElementById('cust-service').value;
+            const status = document.getElementById('cust-status').value;
+            const paid = document.getElementById('cust-paid').value;
+            
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const appId = "#APP-" + randomNum;
+            const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            document.getElementById('spinner').classList.remove('hidden');
+            document.getElementById('btn-text').textContent = "Saving...";
+            document.getElementById('submit-btn').disabled = true;
+
+            const payload = { action: "add", appId, name, phone, service, status, paidAmount: paid, date };
+
+            try {
+                // Send to Google Sheets database!
+                await apiPost(payload);
+                
+                closeModal();
+                await fetchApplications();
+                
+            } catch (error) {
+                alert(error.message || "Error saving. Check console.");
+                console.error(error);
+            } finally {
+                document.getElementById('spinner').classList.add('hidden');
+                document.getElementById('btn-text').textContent = "Save Application";
+                document.getElementById('submit-btn').disabled = false;
+            }
+        }
+
+        function addTableRow(data) {
+            const tableBody = document.getElementById('applications-table-body');
+            
+            let statusBadge = '';
+            const safeData = {
+                appId: escapeHtml(data.appId),
+                name: escapeHtml(data.name),
+                phone: escapeHtml(data.phone),
+                service: escapeHtml(data.service),
+                status: escapeHtml(data.status),
+                date: escapeHtml(data.date),
+                paidAmount: escapeHtml(data.paidAmount)
+            };
+            let initials = escapeHtml(String(data.name ?? '').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase());
+            
+            if (data.status === 'Processing') {
+                statusBadge = `<span class="status-badge bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Processing</span>`;
+            } else if (data.status === 'Missing Docs') {
+                statusBadge = `<span class="status-badge bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Missing Docs</span>`;
+            } else {
+                statusBadge = `<span class="status-badge bg-green-50 text-green-600 border border-green-200 px-3 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-2"><span class="material-symbols-outlined text-[14px]">check_circle</span> Completed</span>`;
+            }
+
+            // Custom WhatsApp Click-To-Chat Link!
+            const waText = encodeURIComponent(`*Aaple Sarkar Maha e-Seva Kendra*\n\nHello *${data.name}*,\nYour application has been registered!\n\nService: ${data.service}\nApp ID: ${data.appId}\nDate: ${data.date}\nPayment: ₹${data.paidAmount}\n\nWe will message you here when it is completed. Reply to this chat anytime to ask for a status update!`);
+            const phoneDigits = String(data.phone ?? '').replace(/\D/g, '');
+            const waLink = `https://wa.me/91${phoneDigits}?text=${waText}`;
+
+            const newRow = document.createElement('tr');
+            newRow.className = "hover:bg-white/80 transition-colors group cursor-pointer animate-fade-in-up";
+            newRow.innerHTML = `
+                <td class="px-8 py-5 font-mono text-xs font-bold text-gray-400 group-hover:text-primary transition-colors">${safeData.appId}</td>
+                <td class="px-6 py-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0">${initials}</div>
+                        <div>
+                            <p class="font-bold text-primary">${safeData.name}</p>
+                            <p class="text-xs text-gray-500 font-medium">+91 ${safeData.phone}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-5 font-medium text-gray-700">
+                    <span class="bg-gray-100 px-3 py-1.5 rounded-lg text-xs">${safeData.service}</span>
+                </td>
+                <td class="px-6 py-5 text-gray-500 font-medium text-xs">${safeData.date}</td>
+                <td class="px-6 py-5">${statusBadge}</td>
+                <td class="px-8 py-5 text-right">
+                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-all shadow-sm" title="Send WhatsApp Message">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.197.666.591 1.222.774 1.396.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564c.173.087.289.129.332.202.043.073.043.423-.101.827z"/></svg>
+                        </a>
+                        <button class="edit-app-btn w-9 h-9 rounded-full bg-gray-100 text-gray-500 hover:bg-secondary hover:text-white flex items-center justify-center transition-all shadow-sm" title="Edit Application">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+            newRow.querySelector('.edit-app-btn').addEventListener('click', () => {
+                openEditModal(data.appId, data.name, data.phone, data.service, data.status, data.paidAmount);
+            });
+        }
+
+        // Setup Date
+        const dateElement = document.getElementById('current-date');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateElement.textContent = new Date().toLocaleDateString('en-US', options);
+
+        // Sidebar Toggle for Mobile
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // slight delay to allow display block to apply before changing opacity
+                setTimeout(() => { overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100'); }, 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+            }
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Update active state in sidebar
+            const items = document.querySelectorAll('.nav-item');
+            items.forEach(item => {
+                if (item.id === 'nav-' + tabId) {
+                    item.classList.remove('sidebar-link', 'text-gray-600');
+                    item.classList.add('sidebar-active');
+                } else {
+                    item.classList.add('sidebar-link', 'text-gray-600');
+                    item.classList.remove('sidebar-active');
+                }
+            });
+
+            // Hide all views first
+            const views = ['view-dashboard', 'view-customers', 'view-services', 'view-settings', 'view-gallery', 'view-reviews', 'view-coming-soon'];
+            views.forEach(v => {
+                const el = document.getElementById(v);
+                if(el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
+
+            // Special case for 'applications' - it's just dashboard without stats
+            if (tabId === 'applications') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('dashboard-stats').classList.add('hidden');
+            } 
+            else if (tabId === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('dashboard-stats').classList.remove('hidden');
+            }
+            else if (tabId === 'customers') {
+                document.getElementById('view-customers').classList.remove('hidden');
+            }
+            else if (tabId === 'services') {
+                document.getElementById('view-services').classList.remove('hidden');
+                renderAdminServices();
+            }
+            else if (tabId === 'settings') {
+                document.getElementById('view-settings').classList.remove('hidden');
+            }
+            else if (tabId === 'gallery') {
+                document.getElementById('view-gallery').classList.remove('hidden');
+            }
+            else if (tabId === 'reviews') {
+                document.getElementById('view-reviews').classList.remove('hidden');
+            }
+            else {
+                // Fallback for future modules
+                document.getElementById('view-coming-soon').classList.remove('hidden');
+                document.getElementById('view-coming-soon').classList.add('flex');
+                document.getElementById('coming-soon-title').textContent = 'Coming Soon';
+            }
+            
+            // On mobile, close sidebar after clicking
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
+
+            runGlobalSearch();
+        }
+    </script>
+    <script>
+        // --- DYNAMIC DATA SYNCING LOGIC ---
+        
+        const DEFAULT_GOOGLE_API_KEY = "AIzaSyCvNkBeFsO7iqztj7l2hTWPoFs2AgD7FOI";
+        
+        // Default Data
+        const defaultGallery = [
+            "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&w=1200&q=80",
+            "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80"
+        ];
+    
+        const defaultReviews = [];
+        const SERVICE_ACCENT_STYLES = {
+            primary: { iconBg: 'bg-primary/10', iconText: 'text-primary' },
+            blue: { iconBg: 'bg-blue-50', iconText: 'text-blue-600' },
+            orange: { iconBg: 'bg-orange-50', iconText: 'text-orange-600' },
+            green: { iconBg: 'bg-green-50', iconText: 'text-green-600' },
+            purple: { iconBg: 'bg-purple-50', iconText: 'text-purple-600' },
+            red: { iconBg: 'bg-red-50', iconText: 'text-red-600' },
+            rose: { iconBg: 'bg-rose-50', iconText: 'text-rose-600' },
+            amber: { iconBg: 'bg-amber-50', iconText: 'text-amber-600' },
+            indigo: { iconBg: 'bg-indigo-50', iconText: 'text-indigo-600' },
+            teal: { iconBg: 'bg-teal-50', iconText: 'text-teal-600' },
+            emerald: { iconBg: 'bg-emerald-50', iconText: 'text-emerald-600' },
+            pink: { iconBg: 'bg-pink-50', iconText: 'text-pink-600' },
+            cyan: { iconBg: 'bg-cyan-50', iconText: 'text-cyan-600' },
+            yellow: { iconBg: 'bg-yellow-50', iconText: 'text-yellow-600' },
+            slate: { iconBg: 'bg-slate-50', iconText: 'text-slate-600' }
+        };
+
+        const defaultServiceCatalog = [
+            { id: 'pan-card', titleEn: 'PAN Card', titleMr: 'पॅन कार्ड', descEn: 'New PAN applications, corrections, and duplicate card processing.', descMr: 'नवीन पॅन अर्ज आणि दुरुस्ती.', icon: 'id_card', accent: 'blue', price: '250', status: 'Active' },
+            { id: 'aadhaar-services', titleEn: 'Aadhaar Services', titleMr: 'आधार सेवा', descEn: 'Aadhaar updates, address changes, and biometric synchronization.', descMr: 'आधार अपडेट आणि दुरुस्ती.', icon: 'verified_user', accent: 'orange', price: '100', status: 'Active' },
+            { id: 'income-caste', titleEn: 'Income & Caste', titleMr: 'उत्पन्न व जात प्रमाणपत्र', descEn: 'Authorized certification for income, caste, and domicile status.', descMr: 'अधिकृत प्रमाणपत्रे काढणे.', icon: 'description', accent: 'green', price: '150', status: 'Active' },
+            { id: 'land-records', titleEn: '7/12 & Land Records', titleMr: '७/१२ आणि उतारे', descEn: 'Official land records extraction and digitally signed documents.', descMr: 'अधिकृत भूमिअभिलेख आणि फेरफार.', icon: 'map', accent: 'purple', price: '50', status: 'Active' },
+            { id: 'passport-seva', titleEn: 'Passport Seva', titleMr: 'पासपोर्ट सेवा', descEn: 'Assistance with new passport applications and verification.', descMr: 'नवीन पासपोर्टसाठी अर्ज मदत.', icon: 'flight', accent: 'indigo', price: '500', status: 'Active' },
+            { id: 'gst-taxation', titleEn: 'GST & Taxation', titleMr: 'जीएसटी आणि टॅक्स', descEn: 'GST registration, return filing, and financial assistance.', descMr: 'जीएसटी नोंदणी आणि रिटर्न.', icon: 'receipt_long', accent: 'amber', price: '300', status: 'Active' },
+            { id: 'banking-points', titleEn: 'Banking Points', titleMr: 'बँकिंग सेवा', descEn: 'Cash deposits, withdrawals, and account opening.', descMr: 'पैसे जमा करणे व काढणे.', icon: 'account_balance', accent: 'teal', price: '0', status: 'Active' },
+            { id: 'insurance', titleEn: 'Insurance', titleMr: 'विमा', descEn: 'Vehicle, life, and health insurance renewals.', descMr: 'वाहन, जीवन आणि आरोग्य विमा.', icon: 'shield_with_heart', accent: 'rose', price: '0', status: 'Active' },
+            { id: 'ration-card', titleEn: 'Ration Card', titleMr: 'रेशन कार्ड', descEn: 'Online ration services and modification.', descMr: 'ऑनलाईन रेशन कार्ड सेवा.', icon: 'credit_card', accent: 'red', price: '150', status: 'Active' },
+            { id: 'driving-license', titleEn: 'Driving License', titleMr: 'ड्रायव्हिंग लायसन्स', descEn: 'Learning & permanent license applications.', descMr: 'लर्निंग आणि परमनंट.', icon: 'commute', accent: 'cyan', price: '200', status: 'Active' },
+            { id: 'pm-kisan', titleEn: 'PM Kisan', titleMr: 'पीएम किसान योजना', descEn: 'Registration & KYC for farmers.', descMr: 'शेतकरी नोंदणी आणि ई-केवायसी.', icon: 'agriculture', accent: 'emerald', price: '0', status: 'Active' },
+            { id: 'ayushman-bharat', titleEn: 'Ayushman Bharat', titleMr: 'आयुष्मान भारत', descEn: 'Health card application and print.', descMr: 'आरोग्य कार्ड काढणे.', icon: 'health_and_safety', accent: 'yellow', price: '0', status: 'Active' },
+            { id: 'e-shram', titleEn: 'e-Shram Card', titleMr: 'ई-श्रम कार्ड', descEn: 'Worker registration and updating.', descMr: 'कामगार नोंदणी.', icon: 'engineering', accent: 'slate', price: '0', status: 'Active' },
+            { id: 'pf-services', titleEn: 'PF Services', titleMr: 'पी.एफ. (PF) सेवा', descEn: 'EPFO withdrawal and KYC.', descMr: 'पैसे काढणे व केवायसी.', icon: 'savings', accent: 'pink', price: '0', status: 'Active' },
+            { id: 'ticket-booking', titleEn: 'Ticket Booking', titleMr: 'तिकीट बुकिंग', descEn: 'Train, bus, and flight bookings.', descMr: 'रेल्वे, बस आणि विमान बुकिंग.', icon: 'directions_bus', accent: 'blue', price: '0', status: 'Active' },
+            { id: 'online-forms', titleEn: 'Online Forms', titleMr: 'ऑनलाईन फॉर्म', descEn: 'Admissions and jobs forms filling.', descMr: 'सर्व प्रकारचे ऑनलाईन अर्ज.', icon: 'assignment', accent: 'orange', price: '0', status: 'Active' }
+        ];
+
+        function normalizeService(service, index) {
+            const item = service || {};
+            return {
+                id: item.id || `svc-${Date.now()}-${index}`,
+                titleEn: item.titleEn || item.titleMr || 'Service',
+                titleMr: item.titleMr || item.titleEn || 'सेवा',
+                descEn: item.descEn || item.descMr || '',
+                descMr: item.descMr || item.descEn || '',
+                icon: item.icon || 'apps',
+                accent: SERVICE_ACCENT_STYLES[item.accent] ? item.accent : 'primary',
+                price: String(item.price || '').replace(/₹/g, '').trim(),
+                status: item.status === 'Inactive' ? 'Inactive' : 'Active'
+            };
+        }
+
+        function normalizeServiceList(services) {
+            const source = Array.isArray(services) && services.length ? services : defaultServiceCatalog;
+            return source.map((service, index) => normalizeService(service, index));
+        }
+
+        function formatServicePrice(price) {
+            const normalized = String(price || '').replace(/₹/g, '').trim();
+            if (!normalized || normalized === '0') return 'On Request';
+            return `&#8377;${escapeHtml(normalized)}`;
+        }
+
+        async function fetchPublicServicesCatalog() {
+            try {
+                const url = new URL(SCRIPT_URL);
+                url.searchParams.set('action', 'publicServices');
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                if (!response.ok || data.result === 'error' || !Array.isArray(data)) {
+                    throw new Error(data.message || 'Failed to load services.');
+                }
+                return normalizeServiceList(data);
+            } catch (error) {
+                console.warn('Using fallback services catalog:', error);
+                return normalizeServiceList(defaultServiceCatalog);
+            }
+        }
+
+        function updateServiceSelect(selectId, options, includePlaceholder) {
+            const select = document.getElementById(selectId);
+            if (!select) return;
+            const selected = select.value;
+            const placeholder = includePlaceholder ? '<option value="">Select a service...</option>' : '';
+            select.innerHTML = `${placeholder}${options.map((service) => `<option value="${escapeHtml(service.titleEn)}">${escapeHtml(service.titleEn)}</option>`).join('')}`;
+            if (selected && options.some((service) => service.titleEn === selected)) {
+                select.value = selected;
+            }
+        }
+
+        function populateServiceSelectOptions() {
+            const activeServices = globalServicesData.filter((service) => service.status === 'Active');
+            const options = activeServices.length ? activeServices : globalServicesData;
+            updateServiceSelect('cust-service', options, true);
+            updateServiceSelect('edit-cust-service', options, false);
+        }
+
+        function renderAdminServices() {
+            const container = document.getElementById('services-admin-grid');
+            if (!container) return;
+
+            if (!globalServicesData.length) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-primary/50 font-semibold">No services in catalog yet.</div>`;
+                return;
+            }
+
+            container.innerHTML = globalServicesData.map((service, index) => {
+                const accent = SERVICE_ACCENT_STYLES[service.accent] || SERVICE_ACCENT_STYLES.primary;
+                const statusStyles = service.status === 'Inactive' ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-600';
+                return `
+                    <div class="service-admin-card glass-card p-6 rounded-3xl border border-white ${service.status === 'Inactive' ? 'opacity-70' : ''}">
+                        <div class="w-12 h-12 ${accent.iconBg} ${accent.iconText} rounded-xl flex items-center justify-center mb-4"><span class="material-symbols-outlined">${escapeHtml(service.icon)}</span></div>
+                        <h3 class="font-bold text-primary text-lg">${escapeHtml(service.titleEn)}</h3>
+                        <p class="text-primary/60 text-xs mt-1">${escapeHtml(service.titleMr)}</p>
+                        <p class="text-primary/70 text-xs mt-3 mb-4 leading-relaxed">${escapeHtml(service.descEn || service.descMr)}</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100 mb-4">
+                            <span class="font-bold text-primary">${formatServicePrice(service.price)}</span>
+                            <span class="text-xs font-bold px-2 py-1 rounded-lg ${statusStyles}">${escapeHtml(service.status)}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editService(${index})" class="flex-1 bg-primary/10 text-primary px-3 py-2 rounded-lg text-xs font-bold hover:bg-primary hover:text-white transition-colors">Edit</button>
+                            <button onclick="toggleServiceStatus(${index})" class="flex-1 bg-secondary/15 text-primary px-3 py-2 rounded-lg text-xs font-bold hover:bg-secondary hover:text-white transition-colors">${service.status === 'Inactive' ? 'Activate' : 'Deactivate'}</button>
+                            <button onclick="deleteService(${index})" class="bg-red-50 text-red-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition-colors">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            runGlobalSearch();
+        }
+
+        async function persistServicesCatalog() {
+            await apiPost({ action: 'saveServices', services: globalServicesData });
+            populateServiceSelectOptions();
+        }
+
+        const serviceModal = document.getElementById('service-modal');
+        const serviceModalContent = document.getElementById('service-modal-content');
+
+        function openServiceModal(mode, index) {
+            const title = document.getElementById('service-modal-title');
+            const editIndex = document.getElementById('service-edit-index');
+            const form = document.getElementById('service-form');
+            const buttonText = document.getElementById('service-btn-text');
+
+            if (!title || !editIndex || !form || !buttonText) return;
+
+            if (mode === 'edit' && Number.isInteger(index) && globalServicesData[index]) {
+                const service = globalServicesData[index];
+                title.textContent = 'Edit Service';
+                buttonText.textContent = 'Update Service';
+                editIndex.value = String(index);
+                document.getElementById('service-title-en').value = service.titleEn || '';
+                document.getElementById('service-title-mr').value = service.titleMr || '';
+                document.getElementById('service-desc-en').value = service.descEn || '';
+                document.getElementById('service-desc-mr').value = service.descMr || '';
+                document.getElementById('service-icon').value = service.icon || 'apps';
+                document.getElementById('service-accent').value = service.accent || 'primary';
+                document.getElementById('service-price').value = String(service.price || '0').replace(/₹/g, '').trim() || '0';
+                document.getElementById('service-status').value = service.status || 'Active';
+            } else {
+                title.textContent = 'Add Service';
+                buttonText.textContent = 'Save Service';
+                editIndex.value = '';
+                form.reset();
+                document.getElementById('service-icon').value = 'apps';
+                document.getElementById('service-accent').value = 'primary';
+                document.getElementById('service-price').value = '0';
+                document.getElementById('service-status').value = 'Active';
+            }
+
+            serviceModal.classList.remove('hidden');
+            setTimeout(() => {
+                serviceModal.classList.remove('opacity-0');
+                serviceModalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeServiceModal() {
+            serviceModal.classList.add('opacity-0');
+            serviceModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                serviceModal.classList.add('hidden');
+            }, 300);
+        }
+
+        function addService() {
+            openServiceModal('add');
+        }
+
+        async function submitServiceForm(event) {
+            event.preventDefault();
+
+            const spinner = document.getElementById('service-spinner');
+            const btn = document.getElementById('service-submit-btn');
+            spinner.classList.remove('hidden');
+            btn.disabled = true;
+
+            const editIndexRaw = document.getElementById('service-edit-index').value;
+            const editIndex = editIndexRaw === '' ? -1 : Number(editIndexRaw);
+
+            const titleEn = (document.getElementById('service-title-en').value || '').trim();
+            const titleMr = (document.getElementById('service-title-mr').value || titleEn).trim();
+            const descEn = (document.getElementById('service-desc-en').value || '').trim();
+            const descMr = (document.getElementById('service-desc-mr').value || descEn).trim();
+            const icon = (document.getElementById('service-icon').value || 'apps').trim();
+            const accent = (document.getElementById('service-accent').value || 'primary').trim();
+            const price = (document.getElementById('service-price').value || '0').replace(/₹/g, '').trim();
+            const status = (document.getElementById('service-status').value || 'Active').trim();
+
+            if (!titleEn) {
+                alert('Service name (English) is required.');
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+                return;
+            }
+
+            if (editIndex >= 0 && globalServicesData[editIndex]) {
+                const previous = { ...globalServicesData[editIndex] };
+                globalServicesData[editIndex] = normalizeService({
+                    ...globalServicesData[editIndex],
+                    titleEn,
+                    titleMr,
+                    descEn,
+                    descMr,
+                    icon,
+                    accent,
+                    price,
+                    status
+                }, editIndex);
+
+                try {
+                    await persistServicesCatalog();
+                    renderAdminServices();
+                    closeServiceModal();
+                } catch (error) {
+                    globalServicesData[editIndex] = previous;
+                    alert(error.message || 'Unable to update service.');
+                }
+            } else {
+                const service = normalizeService({
+                    id: `svc-${Date.now()}`,
+                    titleEn,
+                    titleMr,
+                    descEn,
+                    descMr,
+                    icon,
+                    accent,
+                    price,
+                    status
+                }, globalServicesData.length);
+
+                globalServicesData.push(service);
+                try {
+                    await persistServicesCatalog();
+                    renderAdminServices();
+                    closeServiceModal();
+                } catch (error) {
+                    globalServicesData.pop();
+                    alert(error.message || 'Unable to save service. Add admin token in Settings.');
+                }
+            }
+
+            spinner.classList.add('hidden');
+            btn.disabled = false;
+        }
+
+        function editService(index) {
+            openServiceModal('edit', index);
+        }
+
+        async function toggleServiceStatus(index) {
+            const current = globalServicesData[index];
+            if (!current) return;
+            const previousStatus = current.status;
+            current.status = current.status === 'Inactive' ? 'Active' : 'Inactive';
+
+            try {
+                await persistServicesCatalog();
+                renderAdminServices();
+            } catch (error) {
+                current.status = previousStatus;
+                alert(error.message || 'Unable to update service status.');
+            }
+        }
+
+        async function deleteService(index) {
+            const current = globalServicesData[index];
+            if (!current) return;
+            if (!confirm(`Delete service \"${current.titleEn}\" from catalog?`)) return;
+
+            const removed = globalServicesData.splice(index, 1);
+            try {
+                await persistServicesCatalog();
+                renderAdminServices();
+            } catch (error) {
+                globalServicesData.splice(index, 0, removed[0]);
+                alert(error.message || 'Unable to delete service.');
+            }
+        }
+
+        // Initialize defaults if not present
+        // --- Gallery Admin Logic ---
+        async function renderAdminGallery() {
+            const container = document.getElementById('gallery-admin-grid');
+            if(!container) return;
+
+            container.innerHTML = `<div class="col-span-full text-center py-8 text-primary/50 font-bold">Loading gallery...</div>`;
+            let galleryData = [];
+            try {
+                galleryData = await apiGet({ action: 'gallery' });
+            } catch (error) {
+                console.error("Gallery load failed:", error);
+                container.innerHTML = `<div class="col-span-full text-center py-8 text-red-400 font-bold">${escapeHtml(error.message)}</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            galleryData.forEach((url, idx) => {
+                const imageUrl = safeImageUrl(url);
+                if (!imageUrl) return;
+                container.innerHTML += `
+                <div class="group relative rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white aspect-square">
+                    <img src="${imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                        <button onclick="deleteGalleryImage(${idx})" class="bg-red-500 text-white p-2 rounded-lg self-end hover:bg-red-600 transition-colors shadow-lg" title="Delete Photo">
+                            <span class="material-symbols-outlined text-sm block">delete</span>
+                        </button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        async function addGalleryImage() {
+            const url = prompt("Enter the direct image URL (e.g. from Google Drive, Unsplash, etc):");
+            const imageUrl = safeImageUrl(url);
+            if (imageUrl) {
+                try {
+                    await apiPost({ action: 'addGalleryImage', url: imageUrl });
+                    renderAdminGallery();
+                } catch (error) {
+                    alert(error.message || "Failed to add gallery image.");
+                }
+            } else if (url) {
+                alert("Please enter a valid http or https image URL.");
+            }
+        }
+
+        async function deleteGalleryImage(index) {
+            if(confirm("Are you sure you want to delete this image from the public website?")) {
+                try {
+                    await apiPost({ action: 'deleteGalleryImage', index });
+                    renderAdminGallery();
+                } catch (error) {
+                    alert(error.message || "Failed to delete gallery image.");
+                }
+            }
+        }
+
+        // --- Reviews Admin Logic ---
+        async function renderAdminReviews() {
+            const container = document.getElementById('reviews-admin-list');
+            if(!container) return;
+
+            container.innerHTML = `<div class="text-center py-8 text-primary/50 font-bold">Loading reviews...</div>`;
+            let reviewsData = [];
+            try {
+                reviewsData = await apiGet({ action: 'reviews' });
+            } catch (error) {
+                console.error("Reviews load failed:", error);
+                container.innerHTML = `<div class="text-center py-8 text-red-400 font-bold">${escapeHtml(error.message)}</div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            reviewsData.forEach(r => {
+                const rating = Math.max(0, Math.min(5, Number(r.rating) || 0));
+                const reviewText = escapeHtml(r.text);
+                const reviewerName = escapeHtml(r.name);
+                const reviewDate = escapeHtml(r.date);
+                const reviewId = escapeHtml(String(r.id).replace(/\\/g, '\\\\').replace(/'/g, "\\'"));
+                let starsHtml = '';
+                for(let i=0; i<5; i++) {
+                    if (i < rating) {
+                        starsHtml += `<span class="material-symbols-outlined text-yellow-400" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                    } else {
+                        starsHtml += `<span class="material-symbols-outlined text-gray-300" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                    }
+                }
+
+                let actionsHtml = '';
+                if (r.approved) {
+                    actionsHtml = `
+                    <button onclick="toggleReviewStatus('${reviewId}', false)" class="bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-200 transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">visibility_off</span> Hide from Site
+                    </button>`;
+                } else {
+                    actionsHtml = `
+                    <button onclick="toggleReviewStatus('${reviewId}', true)" class="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-green-200 transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span> Approve
+                    </button>`;
+                }
+
+                container.innerHTML += `
+                <div class="glass-card p-6 rounded-2xl border border-white flex flex-col md:flex-row gap-6 md:items-center transition-all ${r.approved ? '' : 'opacity-60 bg-gray-50'}">
+                    <div class="flex-1 space-y-2">
+                        <div class="flex items-center gap-2">
+                            ${starsHtml}
+                        </div>
+                        <p class="font-medium text-gray-700 italic">"${reviewText}"</p>
+                        <p class="text-sm font-bold text-primary">- ${reviewerName} <span class="text-gray-400 font-normal ml-2">${reviewDate}</span></p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 shrink-0">
+                        ${actionsHtml}
+                        <span class="${r.approved ? 'bg-green-50 text-green-600 border-green-200' : 'bg-orange-50 text-orange-600 border-orange-200'} border px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                            ${r.approved ? '<span class="material-symbols-outlined text-[18px]">public</span> Public' : '<span class="material-symbols-outlined text-[18px]">visibility_off</span> Hidden'}
+                        </span>
+                        <button onclick="deleteReview('${reviewId}')" class="bg-red-50 text-red-600 border border-red-200 px-3 py-2 rounded-xl hover:bg-red-100 transition-colors" title="Delete Review">
+                            <span class="material-symbols-outlined text-[18px] block">delete</span>
+                        </button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        async function toggleReviewStatus(id, newStatus) {
+            try {
+                await apiPost({ action: 'setReviewStatus', id, approved: newStatus });
+                renderAdminReviews();
+            } catch (error) {
+                alert(error.message || "Failed to update review.");
+            }
+        }
+
+        async function deleteReview(id) {
+            if(confirm("Are you sure you want to permanently delete this review?")) {
+                try {
+                    await apiPost({ action: 'deleteReview', id });
+                    renderAdminReviews();
+                } catch (error) {
+                    alert(error.message || "Failed to delete review.");
+                }
+            }
+        }
+
+        async function syncGoogleReviews() {
+            const placeIdInput = document.getElementById('setting-place-id');
+            const apiKeyInput = document.getElementById('setting-api-key');
+            
+            const placeId = placeIdInput ? placeIdInput.value.trim() : "";
+            
+            let apiKey = (apiKeyInput ? apiKeyInput.value.trim() : "") || localStorage.getItem('kendra_google_api_key') || DEFAULT_GOOGLE_API_KEY;
+            
+            if (!placeId || !apiKey) {
+                alert("Error: Missing Place ID or API Key.\n\nPlease configure it in the Settings tab.");
+                return;
+            }
+
+            const btn = document.getElementById('sync-reviews-btn');
+            const spinner = document.getElementById('sync-spinner');
+            const icon = document.getElementById('sync-icon');
+            const text = document.getElementById('sync-text');
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            icon.classList.add('hidden');
+            text.textContent = "Fetching from Google...";
+
+            try {
+                // Construct New Google Places API URL
+                const googleUrl = `https://places.googleapis.com/v1/places/${placeId}?fields=reviews&key=${apiKey}`;
+                
+                // The Places API (New) supports CORS natively, so we fetch directly!
+                const response = await fetch(googleUrl);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message || "API Error");
+                }
+
+                if (!data.reviews || data.reviews.length === 0) {
+                    throw new Error("No reviews found for this place.");
+                }
+
+                const existingReviewsData = await apiGet({ action: 'reviews' });
+                const existingIds = new Set(existingReviewsData.map(r => r.name + r.date)); // Pseudo-ID matching
+
+                const newReviews = [];
+                
+                data.reviews.forEach(review => {
+                    const authorName = review.authorAttribution ? review.authorAttribution.displayName : "Anonymous";
+                    const publishDate = review.relativePublishTimeDescription || "Recently";
+                    const reviewText = (review.text && review.text.text) ? review.text.text : "No written review.";
+                    
+                    const pseudoId = authorName + publishDate;
+                    if (!existingIds.has(pseudoId)) {
+                        newReviews.push({
+                            id: Date.now() + Math.floor(Math.random() * 1000),
+                            name: authorName,
+                            date: publishDate,
+                            text: reviewText,
+                            rating: review.rating || 5,
+                            approved: false // Always pending by default for moderation
+                        });
+                    }
+                });
+
+                if (newReviews.length > 0) {
+                    await apiPost({ action: 'saveReviews', reviews: newReviews });
+                    renderAdminReviews();
+                    text.textContent = `Synced ${newReviews.length} new reviews!`;
+                } else {
+                    text.textContent = "No new reviews found.";
+                }
+
+            } catch (error) {
+                console.error("Sync Error:", error);
+                alert("Failed to fetch reviews. Please check your API Key and Place ID.\n\nDetails: " + error.message);
+                text.textContent = "Sync Failed";
+            } finally {
+                spinner.classList.add('hidden');
+                icon.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    text.textContent = "Sync from Google Maps";
+                    btn.disabled = false;
+                }, 3000);
+            }
+        }
+
+        async function saveSettings() {
+            const placeId = document.getElementById('setting-place-id').value;
+            const apiKey = document.getElementById('setting-api-key').value;
+            const adminToken = document.getElementById('setting-admin-token').value;
+            const kendraName = (document.getElementById('setting-kendra-name') || {}).value || '';
+            const vleName = (document.getElementById('setting-vle-name') || {}).value || '';
+            const cscId = (document.getElementById('setting-csc-id') || {}).value || '';
+            const whatsappToken = (document.getElementById('setting-whatsapp-token') || {}).value || '';
+            
+            localStorage.setItem('kendra_google_place_id', placeId);
+            if (apiKey) {
+                localStorage.setItem('kendra_google_api_key', apiKey);
+            }
+            if (adminToken) {
+                localStorage.setItem('kendra_admin_token', adminToken);
+            }
+            if (kendraName) localStorage.setItem('kendra_kendra_name', kendraName);
+            if (vleName) localStorage.setItem('kendra_vle_name', vleName);
+            if (cscId) localStorage.setItem('kendra_csc_id', cscId);
+            if (whatsappToken) localStorage.setItem('kendra_whatsapp_token', whatsappToken);
+
+            initSupabaseClient();
+
+            // Immediately update sidebar header and bottom profile
+            const sk = document.getElementById('sidebar-kendra-name');
+            const pName = document.getElementById('profile-name');
+            const pCsc = document.getElementById('profile-csc');
+            const pAvatar = document.getElementById('profile-avatar');
+            if (sk && kendraName) sk.textContent = kendraName;
+            if (pName) pName.textContent = vleName || 'Administrator';
+            if (pCsc) pCsc.textContent = cscId || '';
+            if (pAvatar) pAvatar.src = vleName ? `https://ui-avatars.com/api/?name=${encodeURIComponent(vleName)}&background=C9A84C&color=fff` : 'https://ui-avatars.com/api/?background=C9A84C&color=fff';
+            
+            const btn = document.querySelector('button[onclick="saveSettings()"]');
+            const originalText = btn.textContent;
+            btn.textContent = "Saving...";
+            btn.classList.add('bg-gray-400');
+            btn.classList.remove('bg-primary');
+
+            // Try to save to server (Apps Script). Fall back to localStorage if fails.
+            try {
+                await apiPost({ action: 'saveSettings', settings: {
+                    kendra_kendra_name: kendraName,
+                    kendra_vle_name: vleName,
+                    kendra_csc_id: cscId,
+                    kendra_google_place_id: placeId,
+                    kendra_google_api_key: apiKey,
+                    whatsapp_permanent_token: whatsappToken
+                }});
+                btn.textContent = "Saved (server)";
+                btn.classList.remove('bg-gray-400');
+                btn.classList.add('bg-green-500');
+            } catch (err) {
+                console.warn('Server save failed, kept local only', err);
+                btn.textContent = "Saved (local)";
+                btn.classList.remove('bg-gray-400');
+                btn.classList.add('bg-yellow-500');
+            }
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-green-500');
+                btn.classList.remove('bg-yellow-500');
+                btn.classList.add('bg-primary');
+            }, 2000);
+        }
+
+        // Initialize settings on load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedPlaceId = localStorage.getItem('kendra_google_place_id');
+            const savedApiKey = localStorage.getItem('kendra_google_api_key');
+            const savedAdminToken = localStorage.getItem('kendra_admin_token');
+            const savedKendraName = localStorage.getItem('kendra_kendra_name');
+            const savedVleName = localStorage.getItem('kendra_vle_name');
+            globalServicesData = await fetchPublicServicesCatalog();
+            renderAdminServices();
+            populateServiceSelectOptions();
+            if (savedPlaceId) {
+                const el = document.getElementById('setting-place-id');
+                if (el) el.value = savedPlaceId;
+            }
+            if (savedApiKey) {
+                const el = document.getElementById('setting-api-key');
+                if (el) el.value = savedApiKey;
+            }
+            if (savedAdminToken) {
+                const el = document.getElementById('setting-admin-token');
+                if (el) el.value = savedAdminToken;
+            }
+            if (savedKendraName) {
+                const el = document.getElementById('setting-kendra-name');
+                if (el) el.value = savedKendraName;
+                const sk = document.getElementById('sidebar-kendra-name');
+                if (sk) sk.textContent = savedKendraName;
+            }
+            if (savedVleName) {
+                const el = document.getElementById('setting-vle-name');
+                if (el) el.value = savedVleName;
+                const pName = document.getElementById('profile-name'); if (pName) pName.textContent = savedVleName;
+                const pAvatar = document.getElementById('profile-avatar'); if (pAvatar) pAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(savedVleName)}&background=C9A84C&color=fff`;
+            }
+            const savedCsc = localStorage.getItem('kendra_csc_id');
+            if (savedCsc) {
+                const el = document.getElementById('setting-csc-id'); if (el) el.value = savedCsc;
+                const pCsc = document.getElementById('profile-csc'); if (pCsc) pCsc.textContent = savedCsc;
+            }
+
+            const savedWaToken = localStorage.getItem('kendra_whatsapp_token');
+            if (savedWaToken) {
+                const el = document.getElementById('setting-whatsapp-token');
+                if (el) el.value = savedWaToken;
+            }
+            
+            const webhookUrlEl = document.getElementById('setting-webhook-url');
+            if (webhookUrlEl) webhookUrlEl.value = SCRIPT_URL;
+
+            // If an admin token exists, try to load authoritative settings from the server
+            try {
+                if (savedAdminToken) {
+                    const serverSettings = await apiGet({ action: 'settings' });
+                    // merge server settings into inputs and sidebar
+                    if (serverSettings && typeof serverSettings === 'object') {
+                        if (serverSettings.kendra_kendra_name) {
+                            const el = document.getElementById('setting-kendra-name'); if (el) el.value = serverSettings.kendra_kendra_name;
+                            const sk = document.getElementById('sidebar-kendra-name'); if (sk) sk.textContent = serverSettings.kendra_kendra_name;
+                            localStorage.setItem('kendra_kendra_name', serverSettings.kendra_kendra_name);
+                        }
+                        if (serverSettings.kendra_vle_name) {
+                            const el = document.getElementById('setting-vle-name'); if (el) el.value = serverSettings.kendra_vle_name;
+                            localStorage.setItem('kendra_vle_name', serverSettings.kendra_vle_name);
+                        }
+                        if (serverSettings.kendra_google_place_id) {
+                            const el = document.getElementById('setting-place-id'); if (el) el.value = serverSettings.kendra_google_place_id;
+                            localStorage.setItem('kendra_google_place_id', serverSettings.kendra_google_place_id);
+                        }
+                        if (serverSettings.kendra_google_api_key) {
+                            const el = document.getElementById('setting-api-key'); if (el) el.value = serverSettings.kendra_google_api_key;
+                            localStorage.setItem('kendra_google_api_key', serverSettings.kendra_google_api_key);
+                        }
+                        const serverWaToken = serverSettings.whatsapp_permanent_token || serverSettings.kendra_whatsapp_token;
+                        if (serverWaToken) {
+                            const el = document.getElementById('setting-whatsapp-token'); if (el) el.value = serverWaToken;
+                            localStorage.setItem('kendra_whatsapp_token', serverWaToken);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not load settings from server:', err.message || err);
+            }
+
+            initSupabaseClient();
+        });
+
+        // Hook into the tab switcher
+        const originalSwitchTab = switchTab;
+        switchTab = function(tabId) {
+            originalSwitchTab(tabId);
+            if (tabId === 'gallery') {
+                renderAdminGallery();
+            } else if (tabId === 'reviews') {
+                renderAdminReviews();
+            } else if (tabId === 'services') {
+                renderAdminServices();
+            }
+        };
+
+    </script>
+</body>
+</html>

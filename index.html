@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Maha e-Seva Kendra | Your Digital Gateway to Government Services</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&family=Tiro+Devanagari+Marathi&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#7889cb",
+                        "secondary-fixed-dim": "#e6c364",
+                        "inverse-surface": "#2f2e43",
+                        "on-error": "#ffffff",
+                        "primary": "#000b35",
+                        "tertiary-container": "#002c0f",
+                        "on-surface-variant": "#454650",
+                        "primary-container": "#0a1f5c",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e2e0fc",
+                        "inverse-primary": "#b7c4ff",
+                        "outline-variant": "#c5c5d1",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fcf8ff",
+                        "on-tertiary-fixed": "#002109",
+                        "on-tertiary-container": "#00a249",
+                        "secondary-container": "#fed977",
+                        "on-secondary-fixed-variant": "#584400",
+                        "tertiary-fixed-dim": "#3de273",
+                        "on-secondary-fixed": "#241a00",
+                        "surface-container": "#efecff",
+                        "tertiary-fixed": "#66ff8e",
+                        "surface-container-high": "#e8e5ff",
+                        "surface-tint": "#4a5b9a",
+                        "surface": "#fcf8ff",
+                        "on-primary-fixed-variant": "#324380",
+                        "surface-dim": "#dad7f3",
+                        "surface-bright": "#fcf8ff",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container-low": "#f5f2ff",
+                        "surface-container-highest": "#e2e0fc",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f2efff",
+                        "secondary-fixed": "#ffe08f",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "outline": "#757681",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#001404",
+                        "on-background": "#1a1a2e",
+                        "on-tertiary-fixed-variant": "#005322",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001551",
+                        "secondary": "#755b00",
+                        "on-secondary-container": "#785d00",
+                        "on-surface": "#1a1a2e",
+                        "rich-gold": "#C9A84C",
+                        "light-gold": "#E8C97A"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "120px",
+                        "decorative-underline-width": "48px",
+                        "decorative-underline-height": "3px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "container-padding-mobile": "20px",
+                        "container-padding-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "headline-section-mobile": ["Playfair Display"],
+                        "body-main": ["DM Sans"],
+                        "code-id": ["JetBrains Mono"],
+                        "display-hero": ["Playfair Display"],
+                        "display-hero-mobile": ["Playfair Display"],
+                        "body-marathi": ["Tiro Devanagari Marathi"],
+                        "label-caps": ["DM Sans"],
+                        "headline-section": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "headline-section-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-main": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "code-id": ["14px", {"lineHeight": "1", "fontWeight": "500"}],
+                        "display-hero": ["56px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-hero-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-marathi": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-section": ["38px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* 1. Page Load Initial States */
+        #navbar { opacity: 0; transform: translateY(-100%); transition: opacity 400ms ease-out, transform 400ms ease-out; }
+        #navbar.loaded { opacity: 1; transform: translateY(0); }
+
+        .hero-badge { opacity: 0; transform: translateY(-20px); transition: all 500ms ease-out 200ms; }
+        .hero-headline { opacity: 0; transform: translateY(30px); transition: all 600ms ease-out 400ms; }
+        .hero-cta { opacity: 0; transform: scale(0.9); transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 900ms; }
+        .hero-stats { opacity: 0; transform: translateY(20px); transition: all 300ms ease-out 1100ms; }
+
+        .loaded .hero-badge, .loaded .hero-headline, .loaded .hero-cta, .loaded .hero-stats { opacity: 1; transform: translateY(0) scale(1); }
+
+        /* 2. Scroll Reveal Base Classes */
+        .reveal-section { opacity: 0; transform: translateY(24px); transition: all 500ms ease-out; }
+        .reveal-section.active { opacity: 1; transform: translateY(0); }
+
+        .reveal-testimonial { opacity: 0; transform: translateX(-30px); transition: all 600ms ease-out; }
+        .reveal-testimonial.active { opacity: 1; transform: translateX(0); }
+
+        .reveal-item { opacity: 0; transform: translateY(24px); transition: all 500ms ease-out; }
+        .reveal-item.active { opacity: 1; transform: translateY(0); }
+
+        /* 3. Micro-interactions */
+        .service-card { transition: transform 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease-out; }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border-color: #C9A84C; }
+
+        .nav-link { position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #C9A84C; transition: width 300ms ease-out; }
+        .nav-link:hover::after { width: 100%; }
+
+        .nav-logo { width: 76px; height: 76px; transition: width 300ms ease, height 300ms ease; }
+        #navbar.compact .nav-logo { width: 60px; height: 60px; }
+        .brand-copy { transition: opacity 300ms ease, transform 300ms ease; }
+        #navbar.compact .brand-copy { opacity: 0.9; transform: translateY(-1px); }
+        @media (max-width: 640px) {
+            .nav-logo { width: 60px; height: 60px; }
+            #navbar.compact .nav-logo { width: 52px; height: 52px; }
+        }
+
+        .whatsapp-pulse { position: relative; }
+        .whatsapp-pulse::before {
+            content: ''; position: absolute; width: 100%; height: 100%; background: #25D366; border-radius: 9999px; z-index: -1;
+            animation: pulse-green 2s infinite ease-out;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        /* 4. Atmospheric Motion */
+        .drift-bg { animation: drift 15s infinite alternate ease-in-out; }
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.1); }
+        }
+
+        /* Language Toggle Logic */
+        html[lang="en"] .mr { display: none !important; }
+        html[lang="mr"] .en { display: none !important; }
+
+        /* Slideshow */
+        .mySlides { display: none; }
+        .active-slide { display: block; animation: fade 1s; }
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-main">
+
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-surface shadow-md" id="navbar">
+    <div id="navbar-inner" class="flex items-center gap-4 lg:gap-8 px-container-padding-mobile md:px-10 lg:px-container-padding-desktop py-2 max-w-[1280px] mx-auto transition-all duration-300">
+        <a href="#" class="flex items-center gap-3 shrink-0" aria-label="Maha e-Seva Kendra home">
+            <img alt="Maha e-Seva Kendra Logo" class="nav-logo object-contain" src="logo.jpg"/>
+            <span class="brand-copy hidden sm:block border-l border-outline-variant/70 pl-3 leading-tight">
+                <span class="block font-bold text-primary text-lg md:text-xl tracking-normal whitespace-nowrap">Maha e-Seva Kendra</span>
+                <span class="block text-sm md:text-[16px] text-on-surface-variant whitespace-nowrap">Mol</span>
+            </span>
+        </a>
+        <div class="hidden lg:flex gap-7 items-center ml-auto">
+            <a class="nav-link text-on-surface-variant text-sm font-bold hover:text-secondary transition-colors duration-200" href="#services">
+                <span class="en">Services</span><span class="mr">सेवा</span>
+            </a>
+            <a class="nav-link text-on-surface-variant text-sm font-bold hover:text-secondary transition-colors duration-200" href="#gallery">
+                <span class="en">Gallery</span><span class="mr">गॅलरी</span>
+            </a>
+            <a class="nav-link text-on-surface-variant text-sm font-bold hover:text-secondary transition-colors duration-200" href="#hours">
+                <span class="en">Opening hours</span><span class="mr">कामाची वेळ</span>
+            </a>
+            <a class="nav-link text-on-surface-variant text-sm font-bold hover:text-secondary transition-colors duration-200" href="#about">
+                <span class="en">About</span><span class="mr">बद्दल</span>
+            </a>
+        </div>
+        <div class="flex items-center gap-2 md:gap-3 shrink-0 ml-auto lg:ml-2">
+            <!-- Language Toggle Button -->
+            <button id="lang-toggle" class="bg-rich-gold/20 text-rich-gold px-3 py-1.5 rounded-lg border border-rich-gold/30 backdrop-blur-sm text-xs md:text-sm font-bold hover:bg-rich-gold/30 transition-colors">
+                <span class="en">मराठी</span><span class="mr">English</span>
+            </button>
+
+            <a id="admin-login-link" class="hidden sm:flex items-center gap-2 px-4 py-2 border-2 border-secondary text-secondary rounded-full text-sm font-bold hover:bg-secondary hover:text-primary transition-all" href="admin.html">
+                <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+                <span><span class="en">Admin Login</span><span class="mr">अॅडमिन लॉगिन</span></span>
+            </a>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button id="mobile-menu-toggle" class="lg:hidden flex items-center p-2 text-on-surface hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-2xl">menu</span>
+            </button>
+
+            <div class="relative" id="contact-us-menu">
+                <button id="contact-us-toggle" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 border-2 border-primary text-primary rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-all" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="contact-us-dropdown">
+                    <span class="material-symbols-outlined text-sm">support_agent</span>
+                    <span class="hidden sm:inline"><span class="en">Contact Us</span><span class="mr">संपर्क करा</span></span>
+                    <span class="material-symbols-outlined text-sm hidden sm:inline">expand_more</span>
+                </button>
+                <div id="contact-us-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-xl border border-outline-variant/60 bg-white shadow-xl p-2 z-50">
+                    <a class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface hover:bg-primary/10 transition-colors" href="https://wa.me/919096768351">
+                        <span class="material-symbols-outlined text-sm text-[#25D366]">chat</span>
+                        <span><span class="en">WhatsApp</span><span class="mr">व्हॉट्सॲप</span></span>
+                    </a>
+                    <a class="flex items-center gap-2 px-3 py-2 rounded-lg text-on-surface hover:bg-primary/10 transition-colors" href="tel:+919096768351">
+                        <span class="material-symbols-outlined text-sm text-primary">phone</span>
+                        <span><span class="en">Phone Call</span><span class="mr">फोन कॉल</span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Menu -->
+<div id="mobile-menu" class="fixed inset-0 bg-surface z-40 transform translate-x-full transition-transform duration-300 lg:hidden flex flex-col pt-24 px-6 pb-6 shadow-2xl">
+    <div class="flex flex-col gap-6 text-xl">
+        <a class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold border-b border-outline-variant/30 pb-4" href="#services">
+            <span class="en">Services</span><span class="mr">सेवा</span>
+        </a>
+        <a class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold border-b border-outline-variant/30 pb-4" href="#gallery">
+            <span class="en">Gallery</span><span class="mr">गॅलरी</span>
+        </a>
+        <a class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold border-b border-outline-variant/30 pb-4" href="#hours">
+            <span class="en">24/7</span><span class="mr">२४/७</span>
+        </a>
+        <a class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold border-b border-outline-variant/30 pb-4" href="#about">
+            <span class="en">About</span><span class="mr">बद्दल</span>
+        </a>
+        <a class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold pb-4" href="#location">
+            <span class="en">Contact</span><span class="mr">संपर्क</span>
+        </a>
+        <a id="admin-login-link-mobile" class="mobile-nav-link text-on-surface font-bold hover:text-rich-gold pb-4" href="admin.html">
+            <span class="en">Admin Login</span><span class="mr">अॅडमिन लॉगिन</span>
+        </a>
+    </div>
+    <div class="mt-auto space-y-4">
+        <a class="flex items-center justify-center gap-2 px-4 py-3 border-2 border-primary text-primary rounded-xl font-bold w-full" href="tel:+919096768351">
+            <span class="material-symbols-outlined text-sm">phone</span>
+            <span><span class="en">Call Us</span><span class="mr">कॉल करा</span></span>
+        </a>
+        <a class="flex items-center justify-center gap-2 px-4 py-3 bg-[#25D366] text-white rounded-xl font-bold w-full shadow-md" href="https://wa.me/919096768351">
+            <span class="material-symbols-outlined text-sm">chat</span>
+            <span><span class="en">WhatsApp</span><span class="mr">व्हॉट्सॲप</span></span>
+        </a>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<header class="relative pt-32 pb-20 md:pt-48 md:pb-40 bg-primary overflow-hidden">
+    <!-- Drift Background -->
+    <div class="absolute inset-0 drift-bg opacity-30 pointer-events-none" style="background-image: radial-gradient(circle at 30% 30%, #0a1f5c 0%, transparent 50%), radial-gradient(circle at 70% 70%, #001551 0%, transparent 50%);"></div>
+    <div class="relative z-10 max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop text-center md:text-left grid md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <div class="hero-badge inline-flex items-center gap-2 px-3 py-1 bg-primary-container rounded-full border border-secondary-fixed-dim">
+                <span class="material-symbols-outlined text-secondary-fixed-dim text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+                <span class="text-secondary-fixed-dim text-label-caps uppercase tracking-wider">
+                    <span class="en">Government Authorized Center</span><span class="mr">शासकीय अधिकृत केंद्र</span>
+                </span>
+            </div>
+            <h1 class="hero-headline font-display-hero text-display-hero-mobile md:text-display-hero text-white leading-tight">
+                <span class="en">Your Digital Gateway to <span class="text-rich-gold">Government Services</span></span>
+                <span class="mr">शासकीय सेवांसाठी तुमचे <span class="text-rich-gold">डिजिटल प्रवेशद्वार</span></span>
+            </h1>
+            <p class="hero-headline font-body-marathi text-body-marathi text-on-primary-container max-w-lg">
+                <span class="en">Reliable services for all your government needs in one place. PAN Card, Aadhaar updates, and other online services available.</span>
+                <span class="mr">तुमच्या सर्व सरकारी कामांसाठी एकाच ठिकाणी विश्वसनीय सेवा. पॅन कार्ड, आधार अपडेट आणि इतर सर्व ऑनलाईन सेवा उपलब्ध.</span>
+            </p>
+            <div class="hero-cta flex flex-col sm:flex-row gap-4 pt-4">
+                <a class="px-8 py-4 bg-rich-gold text-primary rounded-full font-bold text-lg hover:bg-light-gold transition-all shadow-lg text-center" href="#services">
+                    <span class="en">Explore Services</span><span class="mr">सेवा पहा</span>
+                </a>
+                <a class="px-8 py-4 border-2 border-white text-white rounded-full font-bold text-lg hover:bg-white/10 transition-all text-center" href="#location">
+                    <span class="en">Find Center</span><span class="mr">केंद्र शोधा</span>
+                </a>
+            </div>
+        </div>
+        <div class="hidden md:block hero-headline">
+            <div class="relative group">
+                <div class="absolute -inset-4 bg-rich-gold/20 blur-3xl rounded-full group-hover:bg-rich-gold/30 transition-all duration-700"></div>
+                <img alt="Service Center Representative" class="relative z-10 w-full h-[500px] object-cover rounded-2xl shadow-2xl border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN4rz-OS-_JYx7dPNEAisEh1kDi_mSAx7JKl4_EW8EU27qoxJgm81z_GHBn9FS6gNmLBpglFtFH876gwJ5-1ANlREckF9X-DQ-7VOoyl1j0vU_vH8cCAzy4-5jvep5uVWwy0931Kjgl8NrhJY7WnAB-sD7Hd8na8H_hmxQYWe_yy5Ob0JyHtCvqnu3GmnL9ZM2VhUqB2Iz4oL8kU83sfycW0GsfBI8YPwZBfuIlhJSGrkQrRLDiDH7XCL2TtsaBGUwgyPcj2K3KyY"/>
+            </div>
+        </div>
+    </div>
+    <!-- SVG Wave Divider -->
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+        <svg class="relative block w-full h-[60px]" preserveaspectratio="none" viewbox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg">
+            <path class="fill-background" d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C58,107.54,118.89,111,177.56,101.55,227,93.6,274.63,71.05,321.39,56.44Z"></path>
+        </svg>
+    </div>
+</header>
+
+<!-- Services Section (Expanded to 16) -->
+<section class="py-section-gap max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop" id="services">
+    <div class="text-center mb-16 space-y-4 reveal-section">
+        <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
+            <span class="en">Key Service Categories</span><span class="mr">प्रमुख सेवा</span>
+        </h2>
+        <div class="w-16 h-1 bg-rich-gold mx-auto rounded-full"></div>
+        <p class="text-on-surface-variant max-w-2xl mx-auto">
+            <span class="en">We provide a wide range of essential digital services authorized by the Government of India and Maharashtra.</span>
+            <span class="mr">आम्ही भारत आणि महाराष्ट्र शासनाद्वारे अधिकृत डिजिटल सेवा प्रदान करतो.</span>
+        </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="service-grid"></div>
+</section>
+
+<!-- Photo Slideshow Section (Replaces Pillars of Trust) -->
+<section class="py-section-gap bg-primary-container/5 overflow-hidden" id="gallery">
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+        <div class="text-center mb-16 reveal-section">
+            <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
+                <span class="en">Our Gallery</span><span class="mr">आमची गॅलरी</span>
+            </h2>
+            <div class="w-16 h-1 bg-rich-gold mx-auto mt-4 rounded-full"></div>
+            <p class="text-on-surface-variant mt-4">
+                <span class="en">Glimpses of our center</span><span class="mr">आमच्या केंद्राची एक झलक</span>
+            </p>
+        </div>
+        
+        <div class="relative w-full max-w-4xl mx-auto h-[300px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+            <div id="gallery-slides-container">
+                <!-- Injected via JS -->
+            </div>
+
+            <button onclick="plusSlides(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition-all">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button onclick="plusSlides(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition-all">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- 24/7 Section -->
+<section class="py-section-gap bg-primary text-white overflow-hidden" id="hours">
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop grid lg:grid-cols-2 gap-16 items-center">
+        <div class="reveal-section space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 text-sm font-semibold tracking-[0.2em] uppercase">
+                <span class="en">Opening Hours</span><span class="mr">उघडण्याची वेळ</span>
+            </div>
+            <div class="space-y-3">
+                <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section leading-none">
+                    <span class="block text-7xl md:text-[7rem] text-rich-gold drop-shadow-[0_8px_30px_rgba(0,0,0,0.25)]">24/7</span>
+                    <span class="block mt-2"><span class="en">Always Open</span><span class="mr">नेहमी सुरू</span></span>
+                </h2>
+                <p class="text-on-primary-container text-lg max-w-xl">
+                    <span class="en">Built to stay available whenever citizens need help.</span>
+                    <span class="mr">नागरिकांना कधीही मदत मिळावी म्हणून तयार केले.</span>
+                </p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 max-w-xl">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+                    <div class="flex items-center gap-3 text-rich-gold mb-2">
+                        <span class="material-symbols-outlined">schedule</span>
+                        <span class="font-bold uppercase tracking-[0.15em] text-sm"><span class="en">24/7 Support</span><span class="mr">२४/७ मदत</span></span>
+                    </div>
+                    <p class="text-sm text-white/85">
+                        <span class="en">No closing time, no waiting.</span><span class="mr">बंद वेळ नाही, वाट पाहावी लागत नाही.</span>
+                    </p>
+                </div>
+                <div class="rounded-2xl bg-rich-gold/15 border border-rich-gold/25 p-5">
+                    <div class="flex items-center gap-3 text-rich-gold mb-2">
+                        <span class="material-symbols-outlined">stars</span>
+                        <span class="font-bold uppercase tracking-[0.15em] text-sm"><span class="en">What makes us special</span><span class="mr">आम्हची विशिष्टता</span></span>
+                    </div>
+                    <p class="text-sm text-white/85">
+                        <span class="en">Instant service and Trustful Work.</span><span class="mr">तात्काळ सेवा आणि अखंड मदत.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="reveal-section p-8 rounded-4xl shadow-2xl bg-white/5 backdrop-blur-lg border border-white/10">
+            <div class="text-center space-y-4">
+                <div class="inline-flex items-center justify-center w-36 h-36 rounded-full bg-rich-gold/15 border-4 border-rich-gold/30 mx-auto">
+                    <span class="text-4xl md:text-5xl font-black text-rich-gold">24/7</span>
+                </div>
+                <div>
+                    <p class="text-lg font-bold text-white">
+                        <span class="en">Always available for citizens</span><span class="mr">नागरिकांसाठी नेहमी उपलब्ध</span>
+                    </p>
+                                    </div>
+                <div class="grid grid-cols-2 gap-3 text-sm pt-2">
+                    <div class="rounded-xl bg-white/5 border border-white/10 p-4">
+                        <p class="text-white/70 uppercase tracking-[0.15em] text-xs"><span class="en">Response</span><span class="mr">प्रतिसाद</span></p>
+                        <p class="mt-1 font-bold text-rich-gold">24/7</p>
+                    </div>
+                    <div class="rounded-xl bg-white/5 border border-white/10 p-4">
+                        <p class="text-white/70 uppercase tracking-[0.15em] text-xs"><span class="en">Availability</span><span class="mr">उपलब्धता</span></p>
+                        <p class="mt-1 font-bold text-rich-gold">Everday</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-section-gap bg-[#FFF9F0]">
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+        <div class="text-center mb-16 reveal-section">
+            <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
+                <span class="en">Voices of Citizens</span><span class="mr">नागरिकांचे मनोगत</span>
+            </h2>
+            <div class="w-16 h-1 bg-rich-gold mx-auto mt-4 rounded-full"></div>
+        </div>
+        <div class="relative w-full max-w-4xl mx-auto h-[400px] md:h-[280px] reveal-section">
+            <div id="reviews-container" class="overflow-hidden relative w-full h-full rounded-2xl shadow-xl border border-orange-100 bg-white">
+                <!-- Injected via JS -->
+            </div>
+            
+            <!-- Controls -->
+            <button onclick="plusReview(-1)" class="absolute -left-4 md:-left-16 top-1/2 -translate-y-1/2 z-30 bg-primary hover:bg-primary-container text-white w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg border-2 border-white">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button onclick="plusReview(1)" class="absolute -right-4 md:-right-16 top-1/2 -translate-y-1/2 z-30 bg-primary hover:bg-primary-container text-white w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-lg border-2 border-white">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-section-gap max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop" id="about">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div class="reveal-section">
+            <div class="relative">
+                <div class="absolute -top-4 -left-4 w-32 h-32 border-4 border-rich-gold/20 -z-10 rounded-xl"></div>
+                <img alt="Operator Portrait" class="rounded-2xl shadow-xl w-full h-[500px] object-cover border-4 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2uQY1SvBO8nsapgYF0HiT5YuMsVMeVtPBCIXUwBRPMaPtYOD38PkEvjcwyRqP7Wsp4VMVETvUv-f6Sq1TIhY94BHH1o41SeR4ryT_TvFWgNZZ7u_9TbWGTYzAGWvterii3k4Npfb3JNQ36bIGybKltDmk4QSyB1J0z58qa3QovKMre6RwCg23S6E_vVTI-BRXCZxShhtp2KPcLNM4zPYxYkvMdZDNZWTTrPpLgSrLFEB3ZuYMzQ5o7CXMtMBYYpD84v0K6MIYY00"/>
+                <div class="absolute bottom-6 left-6 bg-white p-4 rounded-xl shadow-lg border-l-4 border-rich-gold">
+                    <p class="text-primary font-bold">Authorized ID</p>
+                    <p class="text-secondary font-code-id text-lg">1763XXXXXX10</p>
+                </div>
+            </div>
+        </div>
+        <div class="reveal-section space-y-6">
+            <span class="text-rich-gold font-bold uppercase tracking-widest text-sm">
+                <span class="en">About Our Mission</span><span class="mr">आमचे ध्येय</span>
+            </span>
+            <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
+                <span class="en">Serving the community with Digital Dignity</span><span class="mr">डिजिटल सबलीकरणाद्वारे समाजसेवा</span>
+            </h2>
+            <p class="text-on-surface-variant leading-relaxed">
+                <span class="en">Maha e-Seva Kendra was established with a singular vision: to bridge the digital divide between the government and its citizens.</span>
+                <span class="mr">महा ई-सेवा केंद्राची स्थापना नागरिकांना शासकीय सेवा सहजपणे मिळवून देण्यासाठी झाली आहे.</span>
+            </p>
+            <div class="hero-stats grid grid-cols-2 gap-6 pt-4">
+                <div>
+                    <h4 class="text-3xl font-bold text-primary count-up" data-target="1000">0</h4>
+                    <p class="text-sm text-on-surface-variant"><span class="en">Satisfied Citizens</span><span class="mr">समाधानी नागरिक</span></p>
+                </div>
+                <div>
+                    <h4 class="text-3xl font-bold text-primary count-up" data-target="50">0</h4>
+                    <p class="text-sm text-on-surface-variant"><span class="en">Services Offered</span><span class="mr">उपलब्ध सेवा</span></p>
+                </div>
+            </div>
+            <div class="pt-4">
+                <div class="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <span class="font-bold text-green-800"><span class="en">Verified VLE (Village Level Entrepreneur)</span><span class="mr">प्रमाणित व्ही.एल.ई.</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Government Trust Strip -->
+<div class="py-12 bg-white border-y border-outline-variant">
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile flex flex-wrap justify-center gap-8 md:gap-16 items-center grayscale opacity-60">
+        <span class="text-xl font-bold text-slate-400">Digital India</span>
+        <span class="text-xl font-bold text-slate-400">CSC SPV</span>
+        <span class="text-xl font-bold text-slate-400">Aaple Sarkar</span>
+        <span class="text-xl font-bold text-slate-400">Maharashtra Government</span>
+    </div>
+</div>
+
+<!-- Location Section -->
+<section class="py-section-gap max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop" id="location">
+    <div class="reveal-section grid lg:grid-cols-2 gap-12 bg-white rounded-3xl overflow-hidden shadow-2xl border border-outline-variant">
+        <div class="p-8 md:p-12 space-y-8">
+            <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
+                <span class="en">Visit Our Center</span><span class="mr">आमच्या केंद्राला भेट द्या</span>
+            </h2>
+            <div class="space-y-6">
+                <div class="flex gap-4">
+                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-white">location_on</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary"><span class="en">Address</span><span class="mr">पत्ता</span></h4>
+                        <p class="text-on-surface-variant">Aaple Sarkar Maha-e-Seva Kendra, Mol</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-white">mail</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary"><span class="en">Email Support</span><span class="mr">ईमेल</span></h4>
+                        <p class="text-on-surface-variant"><a href="mailto:molcsc@gmail.com" class="hover:text-primary">molcsc@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4">
+                <a href="https://www.google.com/maps/place/Apale+Sarkar+Maha-e-Seva+Kendra+Mol/@17.8449126,74.2860944,19.36z" target="_blank" class="w-full py-4 bg-primary text-white rounded-xl font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-2">
+                    <span class="en">Get Directions on Maps</span><span class="mr">नकाशावर पहा</span>
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                </a>
+            </div>
+            <div class="pt-6">
+                <h4 class="font-bold text-primary mb-3"><span class="en">Contact Us</span><span class="mr">संपर्क करा</span></h4>
+                <form id="contact-form" class="space-y-3" onsubmit="handleContactSubmit(event)">
+                    <div>
+                        <input id="contact-name" required class="w-full rounded-xl p-3 bg-surface text-on-surface" placeholder="Your name / तुमचे नाव" />
+                    </div>
+                    <div>
+                        <input id="contact-phone" required class="w-full rounded-xl p-3 bg-surface text-on-surface" placeholder="Phone / फोन" />
+                    </div>
+                    <div>
+                        <textarea id="contact-message" required rows="4" class="w-full rounded-xl p-3 bg-surface text-on-surface" placeholder="Message / संदेश"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full py-3 bg-rich-gold text-primary font-bold rounded-xl">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="h-[400px] lg:h-auto bg-slate-200">
+            <iframe allowfullscreen="" height="100%" loading="lazy" src="https://maps.google.com/maps?q=17.844781,74.2858597&t=&z=18&ie=UTF8&iwloc=&output=embed" style="border:0;" width="100%"></iframe>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-primary text-white pt-20 pb-10">
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div class="flex flex-col items-start gap-3">
+            <a href="#" class="flex items-center gap-3 shrink-0" aria-label="Maha e-Seva Kendra home">
+                <img alt="Maha e-Seva Kendra Logo" class="nav-logo object-contain" src="logo.jpg"/>
+                <span class="brand-copy pl-3 leading-tight">
+                    <span class="block font-bold text-white text-lg md:text-xl tracking-normal">Maha e-Seva Kendra</span>
+                        <span class="block text-sm md:text-[16px] text-white/90">Mol</span>
+                </span>
+            </a>
+            <p class="text-on-primary-container text-sm max-w-[320px] mt-1">
+                <span class="en">Institutionalized government services center dedicated to the digital empowerment of citizens.</span>
+                <span class="mr">शासकीय सेवा सर्वांना सहज उपलब्ध करून देणारे अधिकृत डिजिटल केंद्र.</span>
+            </p>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 text-rich-gold"><span class="en">Quick Links</span><span class="mr">महत्त्वाच्या लिंक्स</span></h4>
+            <ul class="space-y-4 text-sm text-on-primary-container">
+                <li><a class="hover:text-white transition-colors" href="#services"><span class="en">Digital Services</span><span class="mr">डिजिटल सेवा</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#gallery"><span class="en">Our Gallery</span><span class="mr">आमची गॅलरी</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#hours"><span class="en">24/7 Availability</span><span class="mr">२४/७ उपलब्धता</span></a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 text-rich-gold"><span class="en">Important Services</span><span class="mr">महत्त्वाच्या सेवा</span></h4>
+            <ul class="space-y-4 text-sm text-on-primary-container">
+                <li><a class="hover:text-white transition-colors" href="#services"><span class="en">PAN Card Application</span><span class="mr">पॅन कार्ड</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#services"><span class="en">7/12 Extract</span><span class="mr">७/१२ उतारे</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#services"><span class="en">Caste Certificate</span><span class="mr">जात प्रमाणपत्र</span></a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="font-bold mb-6 text-rich-gold"><span class="en">Support</span><span class="mr">मदत</span></h4>
+            <ul class="space-y-4 text-sm text-on-primary-container">
+                <li><a class="hover:text-white transition-colors" href="#"><span class="en">Privacy Policy</span><span class="mr">गोपनीयता धोरण</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#"><span class="en">Terms of Service</span><span class="mr">सेवा अटी</span></a></li>
+                <li><a class="hover:text-white transition-colors" href="#location"><span class="en">Contact Us</span><span class="mr">संपर्क करा</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="max-w-[1200px] mx-auto px-container-padding-mobile border-t border-white/10 pt-8 text-center text-xs text-on-primary-container">
+        <p>
+            <span class="en">© 2024 Institutional Government Services. All rights reserved. Designed for Digital Empowerment.</span>
+            <span class="mr">© २०२४ अधिकृत शासकीय सेवा केंद्र. सर्व हक्क राखीव.</span>
+        </p>
+    </div>
+</footer>
+
+<!-- Floating Elements -->
+<a class="fixed bottom-8 right-8 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-2xl z-40 whatsapp-pulse hover:scale-110 transition-transform" href="https://wa.me/919096768351">
+    <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">chat</span>
+</a>
+
+<script>
+    // 1. Initial Page Load Sequence
+    window.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        const navbar = document.getElementById('navbar');
+        navbar.classList.add('loaded');
+    });
+
+    // 2. Scroll-Triggered Reveals using Intersection Observer
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                
+                // 2b. Staggered Children for Service Cards
+                if (entry.target.id === 'service-grid' || entry.target.classList.contains('grid')) {
+                    const items = entry.target.querySelectorAll('.reveal-item');
+                    items.forEach((item, index) => {
+                        const delay = entry.target.id === 'service-grid' ? 60 : 100;
+                        setTimeout(() => {
+                            item.classList.add('active');
+                        }, index * delay);
+                    });
+                }
+                
+                // 3. Count-up logic for stats row
+                const countUps = entry.target.querySelectorAll('.count-up');
+                countUps.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000;
+                    const startTime = performance.now();
+                    
+                    const updateCount = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const current = Math.floor(progress * target);
+                        // Always show a '+' suffix; remove the 'k' abbreviation
+                        counter.innerText = current + '+';
+                        if (progress < 1) requestAnimationFrame(updateCount);
+                    };
+                    requestAnimationFrame(updateCount);
+                });
+            }
+        });
+    }, observerOptions);
+
+    // Observe all sections and testimonial cards
+    document.querySelectorAll('.reveal-section, .reveal-testimonial, #service-grid, .why-choose-grid').forEach(el => revealObserver.observe(el));
+    
+    // Testimonial cards specifically need a staggered appearance
+    const testimonialRowObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const testimonials = entry.target.querySelectorAll('.reveal-testimonial');
+                testimonials.forEach((card, index) => {
+                    setTimeout(() => card.classList.add('active'), index * 120);
+                });
+            }
+        });
+    }, observerOptions);
+    document.querySelectorAll('.grid:has(.reveal-testimonial)').forEach(el => testimonialRowObserver.observe(el));
+
+    // Observe stats
+    document.querySelectorAll('.hero-stats').forEach(el => revealObserver.observe(el));
+
+    // 4. Navbar Scroll Effect
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        const navInner = document.getElementById('navbar-inner');
+        if (window.scrollY > 50) {
+            nav.classList.add('bg-white/95', 'backdrop-blur-md', 'compact');
+            navInner.classList.add('py-1.5');
+            navInner.classList.remove('py-2');
+        } else {
+            nav.classList.remove('bg-white/95', 'backdrop-blur-md', 'compact');
+            navInner.classList.remove('py-1.5');
+            navInner.classList.add('py-2');
+        }
+    });
+
+    // Language Toggle
+    const langToggleBtn = document.getElementById('lang-toggle');
+    const htmlElement = document.documentElement;
+
+    if (localStorage.getItem('lang') === 'mr') {
+        htmlElement.setAttribute('lang', 'mr');
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+        const currentLang = htmlElement.getAttribute('lang');
+        if (currentLang === 'en') {
+            htmlElement.setAttribute('lang', 'mr');
+            localStorage.setItem('lang', 'mr');
+        } else {
+            htmlElement.setAttribute('lang', 'en');
+            localStorage.setItem('lang', 'en');
+        }
+    });
+
+    function wireAdminLoginLink(linkId) {
+        const link = document.getElementById(linkId);
+        if (!link) return;
+
+        link.addEventListener('click', (event) => {
+            const token = localStorage.getItem('kendra_admin_token');
+            if (!token) return;
+
+            event.preventDefault();
+            const adminUrl = new URL(link.getAttribute('href') || 'admin.html', window.location.href);
+            adminUrl.searchParams.set('adminToken', token);
+            window.location.href = adminUrl.toString();
+        });
+    }
+
+    wireAdminLoginLink('admin-login-link');
+    wireAdminLoginLink('admin-login-link-mobile');
+
+    const contactUsMenu = document.getElementById('contact-us-menu');
+    const contactUsToggle = document.getElementById('contact-us-toggle');
+    const contactUsDropdown = document.getElementById('contact-us-dropdown');
+
+    function closeContactUsMenu() {
+        if (!contactUsDropdown || !contactUsToggle) return;
+        contactUsDropdown.classList.add('hidden');
+        contactUsToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (contactUsToggle && contactUsDropdown) {
+        contactUsToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isHidden = contactUsDropdown.classList.contains('hidden');
+            if (isHidden) {
+                contactUsDropdown.classList.remove('hidden');
+                contactUsToggle.setAttribute('aria-expanded', 'true');
+            } else {
+                closeContactUsMenu();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!contactUsMenu.contains(event.target)) {
+                closeContactUsMenu();
+            }
+        });
+    }
+
+    // Mobile Menu Logic
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const menuIcon = mobileMenuToggle.querySelector('.material-symbols-outlined');
+    
+    function toggleMobileMenu() {
+        const isClosed = mobileMenu.classList.contains('translate-x-full');
+        if (isClosed) {
+            mobileMenu.classList.remove('translate-x-full');
+            menuIcon.innerText = 'close';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            mobileMenu.classList.add('translate-x-full');
+            menuIcon.innerText = 'menu';
+            document.body.style.overflow = ''; // Enable scrolling
+        }
+    }
+
+    mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+    // Close menu when a link is clicked
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', toggleMobileMenu);
+    });
+
+    // Slideshow Logic
+    let slideIndex = 1;
+    let slideTimer;
+
+    function initSlides() {
+        showSlides(slideIndex);
+        slideTimer = setInterval(() => { plusSlides(1) }, 4000); 
+    }
+
+    function plusSlides(n) {
+        clearInterval(slideTimer);
+        showSlides(slideIndex += n);
+        slideTimer = setInterval(() => { plusSlides(1) }, 4000);
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        if(slides.length === 0) return;
+        
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            slides[i].classList.remove('active-slide');
+        }
+        
+        slides[slideIndex-1].style.display = "block";
+        slides[slideIndex-1].classList.add('active-slide');
+    }
+
+    initSlides();
+
+    // Review Slideshow Logic
+    let reviewIndex = 1;
+    let reviewTimer;
+
+    function initReviews() {
+        showReviews(reviewIndex);
+        reviewTimer = setInterval(() => { plusReview(1) }, 6000); 
+    }
+
+    function plusReview(n) {
+        clearInterval(reviewTimer);
+        showReviews(reviewIndex += n);
+        reviewTimer = setInterval(() => { plusReview(1) }, 6000);
+    }
+
+    function showReviews(n) {
+        let i;
+        let slides = document.getElementsByClassName("review-slide");
+        if(slides.length === 0) return;
+        
+        if (n > slides.length) {reviewIndex = 1}
+        if (n < 1) {reviewIndex = slides.length}
+        
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.opacity = "0";
+            slides[i].style.zIndex = "0";
+            slides[i].style.pointerEvents = "none";
+        }
+        
+        slides[reviewIndex-1].style.opacity = "1";
+        slides[reviewIndex-1].style.zIndex = "10";
+        slides[reviewIndex-1].style.pointerEvents = "auto";
+    }
+
+    initReviews();
+
+     // --- DYNAMIC DATA SYNCING LOGIC ---
+    
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyE3KOB5M5hko6ymyDkS4Cc7YblVoKL5OyGOmYvvxbk04lNZwaINVcPQtG7QQndDU0R/exec";
+
+    // Default Data
+    const defaultGallery = [
+        "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80"
+    ];
+
+    const defaultReviews = [];
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[char]));
+    }
+
+    function safeImageUrl(value) {
+        try {
+            const url = new URL(String(value), window.location.href);
+            return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+        } catch {
+            return '';
+        }
+    }
+
+    const SERVICE_ACCENT_STYLES = {
+        primary: { iconBg: 'bg-primary-container/10', iconText: 'text-primary' },
+        blue: { iconBg: 'bg-blue-50', iconText: 'text-blue-600' },
+        orange: { iconBg: 'bg-orange-50', iconText: 'text-orange-600' },
+        green: { iconBg: 'bg-green-50', iconText: 'text-green-600' },
+        purple: { iconBg: 'bg-purple-50', iconText: 'text-purple-600' },
+        red: { iconBg: 'bg-red-50', iconText: 'text-red-600' },
+        rose: { iconBg: 'bg-rose-50', iconText: 'text-rose-600' },
+        amber: { iconBg: 'bg-amber-50', iconText: 'text-amber-600' },
+        indigo: { iconBg: 'bg-indigo-50', iconText: 'text-indigo-600' },
+        teal: { iconBg: 'bg-teal-50', iconText: 'text-teal-600' },
+        emerald: { iconBg: 'bg-emerald-50', iconText: 'text-emerald-600' },
+        pink: { iconBg: 'bg-pink-50', iconText: 'text-pink-600' },
+        cyan: { iconBg: 'bg-cyan-50', iconText: 'text-cyan-600' },
+        yellow: { iconBg: 'bg-yellow-50', iconText: 'text-yellow-600' },
+        slate: { iconBg: 'bg-slate-50', iconText: 'text-slate-600' }
+    };
+
+    const defaultServiceCatalog = [
+        { id: 'pan-card', titleEn: 'PAN Card', titleMr: 'पॅन कार्ड', descEn: 'New PAN applications, corrections, and duplicate card processing.', descMr: 'नवीन पॅन अर्ज आणि दुरुस्ती.', icon: 'id_card', accent: 'blue', price: '₹250', status: 'Active' },
+        { id: 'aadhaar-services', titleEn: 'Aadhaar Services', titleMr: 'आधार सेवा', descEn: 'Aadhaar updates, address changes, and biometric synchronization.', descMr: 'आधार अपडेट आणि दुरुस्ती.', icon: 'verified_user', accent: 'orange', price: '₹100', status: 'Active' },
+        { id: 'income-caste', titleEn: 'Income & Caste', titleMr: 'उत्पन्न व जात प्रमाणपत्र', descEn: 'Authorized certification for income, caste, and domicile status.', descMr: 'अधिकृत प्रमाणपत्रे काढणे.', icon: 'description', accent: 'green', price: '₹150', status: 'Active' },
+        { id: 'land-records', titleEn: '7/12 & Land Records', titleMr: '७/१२ आणि उतारे', descEn: 'Official land records extraction and digitally signed documents.', descMr: 'अधिकृत भूमिअभिलेख आणि फेरफार.', icon: 'map', accent: 'purple', price: '₹50', status: 'Active' },
+        { id: 'passport-seva', titleEn: 'Passport Seva', titleMr: 'पासपोर्ट सेवा', descEn: 'Assistance with new passport applications and verification.', descMr: 'नवीन पासपोर्टसाठी अर्ज मदत.', icon: 'flight', accent: 'indigo', price: '₹500', status: 'Active' },
+        { id: 'gst-taxation', titleEn: 'GST & Taxation', titleMr: 'जीएसटी आणि टॅक्स', descEn: 'GST registration, return filing, and financial assistance.', descMr: 'जीएसटी नोंदणी आणि रिटर्न.', icon: 'receipt_long', accent: 'amber', price: '₹300', status: 'Active' },
+        { id: 'banking-points', titleEn: 'Banking Points', titleMr: 'बँकिंग सेवा', descEn: 'Cash deposits, withdrawals, and account opening.', descMr: 'पैसे जमा करणे व काढणे.', icon: 'account_balance', accent: 'teal', price: '₹0', status: 'Active' },
+        { id: 'insurance', titleEn: 'Insurance', titleMr: 'विमा', descEn: 'Vehicle, life, and health insurance renewals.', descMr: 'वाहन, जीवन आणि आरोग्य विमा.', icon: 'shield_with_heart', accent: 'rose', price: '₹0', status: 'Active' },
+        { id: 'ration-card', titleEn: 'Ration Card', titleMr: 'रेशन कार्ड', descEn: 'Online ration services and modification.', descMr: 'ऑनलाईन रेशन कार्ड सेवा.', icon: 'credit_card', accent: 'red', price: '₹150', status: 'Active' },
+        { id: 'driving-license', titleEn: 'Driving License', titleMr: 'ड्रायव्हिंग लायसन्स', descEn: 'Learning & permanent license applications.', descMr: 'लर्निंग आणि परमनंट.', icon: 'commute', accent: 'cyan', price: '₹200', status: 'Active' },
+        { id: 'pm-kisan', titleEn: 'PM Kisan', titleMr: 'पीएम किसान योजना', descEn: 'Registration & KYC for farmers.', descMr: 'शेतकरी नोंदणी आणि ई-केवायसी.', icon: 'agriculture', accent: 'emerald', price: '₹0', status: 'Active' },
+        { id: 'ayushman-bharat', titleEn: 'Ayushman Bharat', titleMr: 'आयुष्मान भारत', descEn: 'Health card application and print.', descMr: 'आरोग्य कार्ड काढणे.', icon: 'health_and_safety', accent: 'yellow', price: '₹0', status: 'Active' },
+        { id: 'e-shram', titleEn: 'e-Shram Card', titleMr: 'ई-श्रम कार्ड', descEn: 'Worker registration and updating.', descMr: 'कामगार नोंदणी.', icon: 'engineering', accent: 'slate', price: '₹0', status: 'Active' },
+        { id: 'pf-services', titleEn: 'PF Services', titleMr: 'पी.एफ. (PF) सेवा', descEn: 'EPFO withdrawal and KYC.', descMr: 'पैसे काढणे व केवायसी.', icon: 'savings', accent: 'pink', price: '₹0', status: 'Active' },
+        { id: 'ticket-booking', titleEn: 'Ticket Booking', titleMr: 'तिकीट बुकिंग', descEn: 'Train, bus, and flight bookings.', descMr: 'रेल्वे, बस आणि विमान बुकिंग.', icon: 'directions_bus', accent: 'blue', price: '₹0', status: 'Active' },
+        { id: 'online-forms', titleEn: 'Online Forms', titleMr: 'ऑनलाईन फॉर्म', descEn: 'Admissions and jobs forms filling.', descMr: 'सर्व प्रकारचे ऑनलाईन अर्ज.', icon: 'assignment', accent: 'orange', price: '₹0', status: 'Active' }
+    ];
+
+    function normalizeService(service, index) {
+        const item = service || {};
+        return {
+            id: item.id || `svc-${index}`,
+            titleEn: item.titleEn || item.titleMr || 'Service',
+            titleMr: item.titleMr || item.titleEn || 'सेवा',
+            descEn: item.descEn || item.descMr || '',
+            descMr: item.descMr || item.descEn || '',
+            icon: item.icon || 'apps',
+            accent: SERVICE_ACCENT_STYLES[item.accent] ? item.accent : 'primary',
+            price: item.price || '',
+            status: item.status || 'Active'
+        };
+    }
+
+    function formatServicePrice(price) {
+        const value = String(price ?? '').trim();
+        if (!value) return 'On Request';
+        if (value.startsWith('₹')) return escapeHtml(value);
+        return `&#8377;${escapeHtml(value)}`;
+    }
+
+    function buildServiceCard(service, index) {
+        const accent = SERVICE_ACCENT_STYLES[service.accent] || SERVICE_ACCENT_STYLES.primary;
+        const statusClass = service.status === 'Inactive' ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-600';
+        return `
+            <div class="reveal-item service-card bg-white p-6 rounded-xl shadow-sm border border-outline-variant group cursor-default ${service.status === 'Inactive' ? 'opacity-70' : ''}">
+                <div class="w-12 h-12 ${accent.iconBg} rounded-lg flex items-center justify-center mb-4 group-hover:bg-rich-gold/20 transition-colors">
+                    <span class="material-symbols-outlined ${accent.iconText} group-hover:text-rich-gold">${escapeHtml(service.icon)}</span>
+                </div>
+                <h3 class="font-bold text-lg mb-2 text-primary"><span class="en">${escapeHtml(service.titleEn)}</span><span class="mr">${escapeHtml(service.titleMr)}</span></h3>
+                <p class="text-sm text-on-surface-variant"><span class="en">${escapeHtml(service.descEn)}</span><span class="mr">${escapeHtml(service.descMr)}</span></p>
+                <div class="flex justify-between items-center mt-4 pt-4 border-t border-outline-variant/40">
+                    <span class="font-bold text-primary">${formatServicePrice(service.price)}</span>
+                    <span class="text-xs font-bold px-2 py-1 rounded-lg ${statusClass}">${escapeHtml(service.status)}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderServiceGrid(services) {
+        const serviceGrid = document.getElementById('service-grid');
+        if (!serviceGrid) return;
+
+        const normalizedServices = normalizeServiceList(Array.isArray(services) && services.length ? services : defaultServiceCatalog);
+        serviceGrid.innerHTML = normalizedServices.map((service, index) => buildServiceCard(service, index)).join('');
+        activateServiceCardsIfVisible();
+    }
+
+    function normalizeServiceList(services) {
+        return (Array.isArray(services) && services.length ? services : defaultServiceCatalog).map((service, index) => normalizeService(service, index));
+    }
+
+    function activateServiceCardsIfVisible() {
+        const serviceGrid = document.getElementById('service-grid');
+        if (!serviceGrid) return;
+
+        const rect = serviceGrid.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        if (!isVisible) return;
+
+        serviceGrid.querySelectorAll('.reveal-item').forEach((item, index) => {
+            setTimeout(() => item.classList.add('active'), index * 60);
+        });
+    }
+
+    async function loadDynamicServices() {
+        const services = await fetchPublicData('publicServices', defaultServiceCatalog);
+        renderServiceGrid(services);
+    }
+
+    async function fetchPublicData(action, fallback) {
+        try {
+            const url = new URL(SCRIPT_URL);
+            url.searchParams.set('action', action);
+            const response = await fetch(url.toString());
+            const data = await response.json();
+            if (!response.ok || data.result === 'error' || !Array.isArray(data)) {
+                throw new Error(data.message || 'Unable to load content');
+            }
+            return data;
+        } catch (error) {
+            console.warn(`Using fallback for ${action}:`, error);
+            return fallback;
+        }
+    }
+
+    // Load Gallery
+    async function loadDynamicGallery() {
+        const galleryContainer = document.getElementById('gallery-slides-container');
+        if(!galleryContainer) return;
+
+        const galleryData = await fetchPublicData('publicGallery', defaultGallery);
+        
+        galleryContainer.innerHTML = ''; // clear
+        
+        if (galleryData.length === 0) {
+            galleryContainer.innerHTML = `<div class="mySlides absolute inset-0 flex items-center justify-center bg-gray-100"><p class="text-gray-400">No images available.</p></div>`;
+        } else {
+            galleryData.forEach(url => {
+                const imageUrl = safeImageUrl(url);
+                if (!imageUrl) return;
+                galleryContainer.innerHTML += `
+                <div class="mySlides absolute inset-0 transition-opacity duration-1000">
+                    <img src="${imageUrl}" class="w-full h-full object-cover">
+                </div>`;
+            });
+        }
+        slideIndex = 1; // reset
+        showSlides(1);
+    }
+
+    // Load Reviews
+    async function loadDynamicReviews() {
+        const reviewContainer = document.getElementById('reviews-container');
+        if(!reviewContainer) return;
+
+        const approvedReviews = await fetchPublicData('publicReviews', defaultReviews);
+        
+        reviewContainer.innerHTML = '';
+        
+        if (approvedReviews.length === 0) {
+            reviewContainer.innerHTML = `<p class="text-center text-on-surface-variant w-full">No reviews yet.</p>`;
+            return;
+        }
+
+        approvedReviews.forEach((r, idx) => {
+            const rating = Math.max(0, Math.min(5, Number(r.rating) || 0));
+            const reviewText = escapeHtml(r.text);
+            const reviewerName = escapeHtml(r.name);
+            const reviewDate = escapeHtml(r.date);
+            let starsHtml = '';
+            for(let i=0; i<5; i++) {
+                if (i < rating) {
+                    starsHtml += `<span class="material-symbols-outlined text-rich-gold" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                } else {
+                    starsHtml += `<span class="material-symbols-outlined text-outline-variant" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                }
+            }
+            
+            reviewContainer.innerHTML += `
+            <div class="review-slide absolute inset-0 transition-opacity duration-1000 flex items-center justify-center">
+                <div class="text-center px-4 md:px-12 w-full">
+                    <div class="flex justify-center gap-1 mb-4 md:mb-6">${starsHtml}</div>
+                    <p class="font-display-hero text-lg md:text-2xl text-primary leading-snug italic mb-6 line-clamp-4 overflow-hidden text-ellipsis">"${reviewText}"</p>
+                    <div>
+                        <p class="font-bold text-primary">${reviewerName}</p>
+                        <p class="text-xs md:text-sm text-on-surface-variant flex items-center justify-center gap-1 mt-1">
+                            <span class="material-symbols-outlined text-[14px] md:text-[16px] text-[#4285F4]">location_on</span> 
+                            Google Maps Review • ${reviewDate}
+                        </p>
+                    </div>
+                </div>
+            </div>`;
+        });
+        
+        reviewIndex = 1;
+        showReviews(1);
+    }
+
+    // Initialize dynamic data
+    window.addEventListener('DOMContentLoaded', () => {
+        loadDynamicServices();
+        loadDynamicGallery();
+        loadDynamicReviews();
+    });
+
+</script>
+    <script>
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            const subject = encodeURIComponent('Contact from website: ' + name);
+            const body = encodeURIComponent('Name: ' + name + '\nPhone: ' + phone + '\n\n' + message);
+            // Opens user's default mail client with prefilled subject/body
+            window.location.href = `mailto:molcsc@gmail.com?subject=${subject}&body=${body}`;
+        }
+    </script>
+</body>
+</html>
