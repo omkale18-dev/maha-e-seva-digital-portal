@@ -15,6 +15,10 @@ window.CONFIG = {
   WHATSAPP_BUSINESS_ACCOUNT_ID: "", // Optional: Your WhatsApp Business Account ID
   WHATSAPP_TOKEN: "", // Optional: WhatsApp Access Token if configured on frontend
   WEBHOOK_VERIFY_TOKEN: "mseva_chatbot_secure_token",
+  
+  // 3b. Customer Support Contact Numbers
+  WHATSAPP_NUMBER: "919096768351", // Your WhatsApp Business number (with country code, e.g., 919096768351)
+  CONTACT_PHONE: "+919096768351",   // Your public phone call number (e.g., +919096768351)
 
   // 4. Admin Write Token for Google Apps Script authorization
   ADMIN_TOKEN: "mseva_Q7xL92pA4vN8kR3sT6yB1cD5eF0hWz",

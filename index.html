@@ -993,7 +993,26 @@
         showReviews(1);
     }
 
+    function initContactLinks() {
+        const whatsappNumber = (window.CONFIG && window.CONFIG.WHATSAPP_NUMBER) ? window.CONFIG.WHATSAPP_NUMBER : "919096768351";
+        const contactPhone = (window.CONFIG && window.CONFIG.CONTACT_PHONE) ? window.CONFIG.CONTACT_PHONE : "+919096768351";
+        
+        // Update WhatsApp links
+        document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+            // Keep query parameters if any (e.g., text)
+            const urlObj = new URL(link.href);
+            urlObj.pathname = `/${whatsappNumber}`;
+            link.href = urlObj.toString();
+        });
+        
+        // Update Telephone links
+        document.querySelectorAll('a[href*="tel:"]').forEach(link => {
+            link.href = `tel:${contactPhone}`;
+        });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+        initContactLinks();
         loadDynamicServices();
         loadDynamicReviews();
     });
