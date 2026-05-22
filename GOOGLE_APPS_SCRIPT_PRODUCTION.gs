@@ -134,7 +134,8 @@ function readApplications() {
       service: row[3],
       status: row[4],
       paidAmount: row[5],
-      date: row[6]
+      date: row[6],
+      remainingAmount: row[8] !== undefined ? row[8] : 0
     });
   }
 
@@ -398,7 +399,9 @@ function addApplication(data) {
     data.service,
     data.status,
     data.paidAmount,
-    data.date
+    data.date,
+    "", // missingDocs placeholder at index 7 (Column H)
+    data.remainingAmount || 0 // remainingAmount at index 8 (Column I)
   ]);
 
   return jsonResponse({ result: "success" });
@@ -416,6 +419,7 @@ function updateApplication(data) {
       sheet.getRange(rowNum, 4).setValue(data.service);
       sheet.getRange(rowNum, 5).setValue(data.status);
       sheet.getRange(rowNum, 6).setValue(data.paidAmount);
+      sheet.getRange(rowNum, 9).setValue(data.remainingAmount || 0); // remainingAmount is index 8, so column 9 (Column I)
       return jsonResponse({ result: "success" });
     }
   }
