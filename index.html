@@ -331,33 +331,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="service-grid"></div>
 </section>
 
-<!-- Photo Slideshow Section (Replaces Pillars of Trust) -->
-<section class="py-section-gap bg-primary-container/5 overflow-hidden" id="gallery">
-    <div class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop">
-        <div class="text-center mb-16 reveal-section">
-            <h2 class="font-headline-section text-headline-section-mobile md:text-headline-section text-primary">
-                <span class="en">Our Gallery</span><span class="mr">आमची गॅलरी</span>
-            </h2>
-            <div class="w-16 h-1 bg-rich-gold mx-auto mt-4 rounded-full"></div>
-            <p class="text-on-surface-variant mt-4">
-                <span class="en">Glimpses of our center</span><span class="mr">आमच्या केंद्राची एक झलक</span>
-            </p>
-        </div>
-        
-        <div class="relative w-full max-w-4xl mx-auto h-[300px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-            <div id="gallery-slides-container">
-                <!-- Injected via JS -->
-            </div>
 
-            <button onclick="plusSlides(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition-all">
-                <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button onclick="plusSlides(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-sm transition-all">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-        </div>
-    </div>
-</section>
 
 <!-- 24/7 Section -->
 <section class="py-section-gap bg-primary text-white overflow-hidden" id="hours">
@@ -786,39 +760,7 @@
         link.addEventListener('click', toggleMobileMenu);
     });
 
-    // Slideshow Logic
-    let slideIndex = 1;
-    let slideTimer;
 
-    function initSlides() {
-        showSlides(slideIndex);
-        slideTimer = setInterval(() => { plusSlides(1) }, 4000); 
-    }
-
-    function plusSlides(n) {
-        clearInterval(slideTimer);
-        showSlides(slideIndex += n);
-        slideTimer = setInterval(() => { plusSlides(1) }, 4000);
-    }
-
-    function showSlides(n) {
-        let i;
-        let slides = document.getElementsByClassName("mySlides");
-        if(slides.length === 0) return;
-        
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
-        
-        for (i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
-            slides[i].classList.remove('active-slide');
-        }
-        
-        slides[slideIndex-1].style.display = "block";
-        slides[slideIndex-1].classList.add('active-slide');
-    }
-
-    initSlides();
 
     // Review Slideshow Logic
     let reviewIndex = 1;
@@ -1010,30 +952,7 @@
         }
     }
 
-    // Load Gallery
-    async function loadDynamicGallery() {
-        const galleryContainer = document.getElementById('gallery-slides-container');
-        if(!galleryContainer) return;
 
-        const galleryData = await fetchPublicData('publicGallery', defaultGallery);
-        
-        galleryContainer.innerHTML = ''; // clear
-        
-        if (galleryData.length === 0) {
-            galleryContainer.innerHTML = `<div class="mySlides absolute inset-0 flex items-center justify-center bg-gray-100"><p class="text-gray-400">No images available.</p></div>`;
-        } else {
-            galleryData.forEach(url => {
-                const imageUrl = safeImageUrl(url);
-                if (!imageUrl) return;
-                galleryContainer.innerHTML += `
-                <div class="mySlides absolute inset-0 transition-opacity duration-1000">
-                    <img src="${imageUrl}" class="w-full h-full object-cover">
-                </div>`;
-            });
-        }
-        slideIndex = 1; // reset
-        showSlides(1);
-    }
 
     // Load Reviews
     async function loadDynamicReviews() {
@@ -1083,10 +1002,8 @@
         showReviews(1);
     }
 
-    // Initialize dynamic data
     window.addEventListener('DOMContentLoaded', () => {
         loadDynamicServices();
-        loadDynamicGallery();
         loadDynamicReviews();
     });
 

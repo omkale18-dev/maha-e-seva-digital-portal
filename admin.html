@@ -198,12 +198,7 @@
                 Services Catalog
             </a>
             
-            <p class="px-4 text-[10px] font-bold text-primary/50 uppercase tracking-widest mb-3 mt-8 animate-slide-in-right" style="animation-delay: 0.6s;">Website Control</p>
-            
-            <a href="#" id="nav-gallery" onclick="switchTab('gallery')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.7s;">
-                <span class="material-symbols-outlined">collections</span>
-                Photo Gallery
-            </a>
+
             <a href="#" id="nav-reviews" onclick="switchTab('reviews')" class="nav-item sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-gray-600 font-medium text-sm animate-slide-in-right" style="animation-delay: 0.8s;">
                 <span class="material-symbols-outlined">star_rate</span>
                 Manage Reviews
@@ -416,23 +411,7 @@
             </div>
         </div>
 
-        <!-- Photo Gallery View -->
-        <div id="view-gallery" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
-            <div class="max-w-7xl mx-auto space-y-8">
-                <div class="flex flex-col md:flex-row justify-between md:items-end gap-4">
-                    <div>
-                        <h2 class="text-3xl font-display font-bold text-primary mb-2">Photo Gallery</h2>
-                        <p class="text-primary/60 text-sm font-medium">Manage images shown on your public website.</p>
-                    </div>
-                    <button onclick="addGalleryImage()" class="bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-primary-light transition-all flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">add_link</span> Add Photo URL
-                    </button>
-                </div>
-                <div id="gallery-admin-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Dynamic Gallery Admin -->
-                </div>
-            </div>
-        </div>
+
 
         <!-- Manage Reviews View -->
         <div id="view-reviews" class="hidden flex-1 overflow-y-auto p-6 lg:p-10 z-10">
@@ -1504,7 +1483,7 @@
             });
 
             // Hide all views first
-            const views = ['view-dashboard', 'view-customers', 'view-services', 'view-settings', 'view-gallery', 'view-reviews', 'view-coming-soon'];
+            const views = ['view-dashboard', 'view-customers', 'view-services', 'view-settings', 'view-reviews', 'view-coming-soon'];
             views.forEach(v => {
                 const el = document.getElementById(v);
                 if(el) {
@@ -1531,9 +1510,6 @@
             }
             else if (tabId === 'settings') {
                 document.getElementById('view-settings').classList.remove('hidden');
-            }
-            else if (tabId === 'gallery') {
-                document.getElementById('view-gallery').classList.remove('hidden');
             }
             else if (tabId === 'reviews') {
                 document.getElementById('view-reviews').classList.remove('hidden');
@@ -1865,64 +1841,7 @@
             }
         }
 
-        // Initialize defaults if not present
-        // --- Gallery Admin Logic ---
-        async function renderAdminGallery() {
-            const container = document.getElementById('gallery-admin-grid');
-            if(!container) return;
 
-            container.innerHTML = `<div class="col-span-full text-center py-8 text-primary/50 font-bold">Loading gallery...</div>`;
-            let galleryData = [];
-            try {
-                galleryData = await apiGet({ action: 'gallery' });
-            } catch (error) {
-                console.error("Gallery load failed:", error);
-                container.innerHTML = `<div class="col-span-full text-center py-8 text-red-400 font-bold">${escapeHtml(error.message)}</div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            
-            galleryData.forEach((url, idx) => {
-                const imageUrl = safeImageUrl(url);
-                if (!imageUrl) return;
-                container.innerHTML += `
-                <div class="group relative rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white aspect-square">
-                    <img src="${imageUrl}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                        <button onclick="deleteGalleryImage(${idx})" class="bg-red-500 text-white p-2 rounded-lg self-end hover:bg-red-600 transition-colors shadow-lg" title="Delete Photo">
-                            <span class="material-symbols-outlined text-sm block">delete</span>
-                        </button>
-                    </div>
-                </div>`;
-            });
-        }
-
-        async function addGalleryImage() {
-            const url = prompt("Enter the direct image URL (e.g. from Google Drive, Unsplash, etc):");
-            const imageUrl = safeImageUrl(url);
-            if (imageUrl) {
-                try {
-                    await apiPost({ action: 'addGalleryImage', url: imageUrl });
-                    renderAdminGallery();
-                } catch (error) {
-                    alert(error.message || "Failed to add gallery image.");
-                }
-            } else if (url) {
-                alert("Please enter a valid http or https image URL.");
-            }
-        }
-
-        async function deleteGalleryImage(index) {
-            if(confirm("Are you sure you want to delete this image from the public website?")) {
-                try {
-                    await apiPost({ action: 'deleteGalleryImage', index });
-                    renderAdminGallery();
-                } catch (error) {
-                    alert(error.message || "Failed to delete gallery image.");
-                }
-            }
-        }
 
         // --- Reviews Admin Logic ---
         async function renderAdminReviews() {
@@ -2236,9 +2155,7 @@
         const originalSwitchTab = switchTab;
         switchTab = function(tabId) {
             originalSwitchTab(tabId);
-            if (tabId === 'gallery') {
-                renderAdminGallery();
-            } else if (tabId === 'reviews') {
+            if (tabId === 'reviews') {
                 renderAdminReviews();
             } else if (tabId === 'services') {
                 renderAdminServices();
