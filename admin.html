@@ -2158,7 +2158,8 @@
 
             const adminTokenEl = document.getElementById('info-admin-token');
             if (adminTokenEl) {
-                const rawToken = (window.CONFIG && window.CONFIG.ADMIN_TOKEN) || '';
+                const rawToken = (window.ADMIN_CONFIG && window.ADMIN_CONFIG.ADMIN_TOKEN) || 
+                                 (window.CONFIG && window.CONFIG.ADMIN_TOKEN) || '';
                 if (rawToken) {
                     adminTokenEl.textContent = rawToken.length > 8 ? `${rawToken.substring(0, 6)}...${rawToken.substring(rawToken.length - 6)}` : 'Secure';
                 } else {
